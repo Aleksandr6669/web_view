@@ -1,9 +1,15 @@
 import flet as ft
 
-def main(page: ft.Page):
-    page.title = "Старт"
-    
-    # Указываем URL загруженного HTML-файла
-    page.add(ft.WebView(src="https://tmbot.kivismart.com/webapp_index/353095791"))
+import flet_webview as fwv
 
-ft.app(target=main)
+def main(page: ft.Page):
+    wv = fwv.WebView(
+        url="https://flet.dev",
+        on_page_started=lambda _: print("Page started"),
+        on_page_ended=lambda _: print("Page ended"),
+        on_web_resource_error=lambda e: print("Page error:", e.data),
+        expand=True,
+    )
+    page.add(wv)
+
+ft.app(main)
