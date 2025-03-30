@@ -31,7 +31,8 @@ camera_html = """
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             let imageData = canvas.toDataURL('image/png');
-            window.parent.postMessage(imageData, "*"); // Отправляем в Flet
+            // Отправка данных родителю
+            window.parent.postMessage(imageData, "*");
         };
     </script>
 </body>
@@ -41,16 +42,16 @@ camera_html = """
 def main(page: ft.Page):
     page.title = "Камера на Flet"
 
-    def on_message(e: ft.WebViewMessageEvent):
+    def on_message(data: str):
         # Получаем изображение в формате base64
-        print("Фото получено:", e.message)  
-        img.src_base64 = e.message  # Отображаем снимок
+        print("Фото получено:", data)
+        img.src_base64 = data  # Отображаем снимок
         page.update()
 
     # Кодируем HTML в data URL
     html_data_url = f"data:text/html;charset=utf-8,{camera_html}"
 
-    # Создаем WebView с встроенным HTML
+    # Создаем WebView с встроенным HTML и передаем callback для получения данных
     web_view = ft.WebView(url=html_data_url, on_message=on_message)
 
     # Виджет для отображения снимка
