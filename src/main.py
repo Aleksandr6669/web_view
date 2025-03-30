@@ -60,6 +60,7 @@ def main(page: ft.Page):
     # Регистрируем обработчик сообщений из WebView
     web_view.on_message = get_image_from_webview
 
+    # Добавляем WebView на страницу
     page.add(web_view)
 
 ft.app(target=main, view=ft.WEB_BROWSER)
