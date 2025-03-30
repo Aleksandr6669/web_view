@@ -1,19 +1,41 @@
 import flet as ft
-import os
 
 def main(page: ft.Page):
-    page.title = "Видеоискатель в браузере"
+    page.title = "Видеоискатель в браузере (Flet + JS)"
 
-    # Проверяем, существует ли HTML-файл
-    html_path = os.path.abspath("camera.html")
-    if not os.path.exists(html_path):
-        page.add(ft.Text("Ошибка: файл camera.html не найден!", color="red"))
-        return
+    # Встраиваем HTML + JavaScript прямо в WebView
+    camera_html = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Видео с камеры</title>
+    </head>
+    <body>
+        <h2>Видеоискатель</h2>
+        <video id="video" width="640" height="480" autoplay></video>
 
-    # WebView для загрузки камеры
-    web_view = ft.WebView(url=f"file://{html_path}")
+        <script>
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    document.getElementById('video').srcObject = stream;
+                })
+                .catch(function(error) {
+                    alert("Ошибка доступа к камере: " + error);
+                });
+        </script>
+    </body>
+    </html>
+    """
+
+    # Кодируем HTML в data URL
+    html_data_url = f"data:text/html;charset=utf-8,{camera_html}"
+
+    # Создаём WebView с этим кодом
+    web_view = ft.WebView(url=html_data_url)
 
     page.add(ft.Text("Видео с камеры"))
     page.add(web_view)
 
-ft.app(target=main, view=ft.WEB_BROWSER)  # Запускаем Flet в браузере
+ft.app(target=main, view=ft.WEB_BROWSER)
