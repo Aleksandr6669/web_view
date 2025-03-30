@@ -1,70 +1,47 @@
 import flet as ft
+import cv2
+import threading
+import time
+import base64
+import numpy as np
+from io import BytesIO
+from PIL import Image
 
 def main(page: ft.Page):
-    page.title = "Видеокамера в Flet (JS)"
+    page.title = "Видеоискатель в Flet"
+    
+    # Элемент для отображения видеопотока
+    video_image = ft.Image(width=640, height=480)
 
-    # Контейнер для отображения захваченного изображения
-    captured_image = ft.Image(src="", width=640, height=480)
+    def update_video():
+        """Функция потока для обновления видеопотока"""
+        cap = cv2.VideoCapture(0)  # Открываем камеру (0 — первая камера)
 
-    def handle_image_capture(image_data):
-        """Получаем изображение из JavaScript и показываем в Flet"""
-        captured_image.src = image_data
-        page.update()
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-    # Встроенный JavaScript-код для работы с камерой
-    camera_js = """
-    <script>
-        let video;
-        let canvas;
-        let context;
+            # Конвертируем кадр в Base64
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # OpenCV использует BGR, меняем на RGB
+            pil_img = Image.fromarray(frame)
+            buffered = BytesIO()
+            pil_img.save(buffered, format="PNG")
+            img_str = base64.b64encode(buffered.getvalue()).decode()
 
-        function initCamera() {
-            video = document.createElement("video");
-            video.width = 640;
-            video.height = 480;
-            document.body.appendChild(video);
+            # Обновляем изображение в Flet
+            video_image.src_base64 = img_str
+            page.update()
+            
+            time.sleep(0.03)  # 30 FPS (пауза между кадрами)
+        
+        cap.release()
 
-            canvas = document.createElement("canvas");
-            canvas.width = 640;
-            canvas.height = 480;
-            context = canvas.getContext("2d");
+    # Запускаем поток с камерой
+    thread = threading.Thread(target=update_video, daemon=True)
+    thread.start()
 
-            if (navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(function(stream) {
-                        video.srcObject = stream;
-                        video.play();
-                    })
-                    .catch(function(error) {
-                        alert("Ошибка при доступе к камере: " + error);
-                    });
-            }
-        }
-
-        function captureImage() {
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            let imageData = canvas.toDataURL("image/png");
-            window.flutter_inappwebview.callHandler("imageCaptured", imageData);
-        }
-
-        window.onload = function() {
-            initCamera();
-            let button = document.createElement("button");
-            button.innerText = "Захватить изображение";
-            button.onclick = captureImage;
-            document.body.appendChild(button);
-        }
-    </script>
-    """
-
-    # WebView с JavaScript-кодом
-    web_view = ft.WebView(
-        html=f"<html><body>{camera_js}</body></html>",
-        on_message=handle_image_capture,
-    )
-
-    page.add(ft.Text("Камера в Flet на чистом JS"))
-    page.add(web_view)
-    page.add(captured_image)
+    # Добавляем изображение на страницу
+    page.add(video_image)
 
 ft.app(target=main)
