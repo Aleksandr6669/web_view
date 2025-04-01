@@ -182,7 +182,7 @@ def main(page: ft.Page):
         bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLUE_GREY_900,),
         blur = 20,
         width=350,
-        height=400,
+        height=410,
         border_radius=20,
         padding=20,
         content=ft.Column([
@@ -191,8 +191,8 @@ def main(page: ft.Page):
             password,
             login_btn,
             register_btn,
+            lang_dropdown,
             msg,
-            lang_dropdown
         ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
         
     )
