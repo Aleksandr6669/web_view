@@ -112,8 +112,19 @@ def main(page: ft.Page):
             show_message("Пароль должен содержать минимум 6 символов, цифры и буквы")
         else:
             show_message("")
+    
+    # Динамическое обновление высоты
+    def on_resize(e):
+        page_height = page.height  # Обновляем высоту страницы
+
+        # Обновляем расположение элементов в зависимости от доступного пространства
+        # Например, сдвигаем элементы на страницу в зависимости от высоты
+        container.height = page_height - 100  # Делаем пространство гибким для ввода
+
+        page.update()
 
     tr = get_translations(current_lang)
+
 
     title = ft.Text(tr["welcome"], size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
 
@@ -179,7 +190,7 @@ def main(page: ft.Page):
     )
 
     container = ft.Container(
-        bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLUE_GREY_900,),
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_900,),
         blur = 20,
         width=350,
         height=415,
@@ -220,5 +231,6 @@ def main(page: ft.Page):
 
     page.add(body)
     update_ui()
+    page.on_resize = on_resize
 
 ft.app(target=main)
