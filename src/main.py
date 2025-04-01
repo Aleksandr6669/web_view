@@ -13,13 +13,13 @@ def main(page: ft.Page):
     page.bgcolor = ft.colors.TRANSPARENT
     page.padding = 0
 
-    current_lang = "ru"
+    current_lang = "en"
     access_token = None  # Храним токен после авторизации
 
     languages = {
-        "ru": ("Русский", "🇷🇺"),
         "en": ("English", "🇬🇧"),
         "ua": ("Українська", "🇺🇦"),
+        # "ru": ("Русский", "🇷🇺"),
     }
 
     def update_language(e):
