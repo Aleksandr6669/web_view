@@ -212,8 +212,8 @@ def main(page: ft.Page):
     background = ft.Image(
             src="/image/background.jpg",  # Путь к изображению
 
-            width=page.width*1.6,
-            height=page.height*1.6,      # Устанавливаем, как изображение должно быть вписано в контейнер
+            width=page.width*3.2,
+            height=page.height*3.2,      # Устанавливаем, как изображение должно быть вписано в контейнер
             fit=ft.ImageFit.COVER,        # Устанавливаем, чтобы изображение покрывало весь контейнер
             expand=True                   # Фон растягивается по размеру контейнера
         )
@@ -223,10 +223,11 @@ def main(page: ft.Page):
                 background,               # Добавляем фон первым
                 container                 # Контейнер с остальными элементами
             ],
+            width=page.width*3.2,
+            height=page.height*3.2,
             alignment=ft.alignment.center,
             expand=True,                   # Растягиваем Stack на весь доступный размер
-            width=page.width*1.6,             # Устанавливаем ширину страницы
-            height=page.height*1.6,        # Устанавливаем высоту страницы
+            
         )
 
     page.add(body)
