@@ -9,14 +9,9 @@ def main(page: ft.Page):
     page.title = "Авторизация"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.theme_mode = ft.ThemeMode.SYSTEM
-
-    # Градиентный фон
-    page.bgcolor = ft.LinearGradient(
-        begin=ft.alignment.top_center,
-        end=ft.alignment.bottom_center,
-        colors=[ft.colors.BLUE, ft.colors.YELLOW]
-    )
+    # page.theme_mode = ft.ThemeMode.SYSTEM
+    page.bgcolor = ft.colors.TRANSPARENT
+    page.padding = 0
 
     current_lang = "ru"
     access_token = None  # Храним токен после авторизации
@@ -184,12 +179,12 @@ def main(page: ft.Page):
     )
 
     container = ft.Container(
-        expand=True,
-        gradient=ft.LinearGradient(
-            begin=ft.alignment.top_center,
-            end=ft.alignment.bottom_center,
-            colors=[ft.colors.BLUE, ft.colors.YELLOW]
-        ),
+        bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.BLUE_GREY_900,),
+        blur = 20,
+        width=350,
+        height=400,
+        border_radius=20,
+        padding=20,
         content=ft.Column([
             title,
             username,
@@ -199,10 +194,30 @@ def main(page: ft.Page):
             msg,
             lang_dropdown
         ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-        width=1850,
+        
     )
 
-    page.add(container)
+    background = ft.Image(
+            src="/image/background.jpg",  # Путь к изображению
+
+            width=page.width*1.6,
+            height=page.height*1.6,      # Устанавливаем, как изображение должно быть вписано в контейнер
+            fit=ft.ImageFit.COVER,        # Устанавливаем, чтобы изображение покрывало весь контейнер
+            expand=True                   # Фон растягивается по размеру контейнера
+        )
+
+    body = ft.Stack(
+            [
+                background,               # Добавляем фон первым
+                container                 # Контейнер с остальными элементами
+            ],
+            alignment=ft.alignment.center,
+            expand=True,                   # Растягиваем Stack на весь доступный размер
+            width=page.width*1.6,             # Устанавливаем ширину страницы
+            height=page.height*1.6,        # Устанавливаем высоту страницы
+        )
+
+    page.add(body)
     update_ui()
 
 ft.app(target=main)
