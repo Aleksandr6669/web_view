@@ -16,7 +16,6 @@ def main(page: ft.Page):
     page.padding = 0
 
     current_lang = "en"
-    access_token = None  # Храним токен после авторизации
 
     languages = {
         "en": ("English", "🇬🇧"),
@@ -24,11 +23,30 @@ def main(page: ft.Page):
         # "ru": ("Русский", "🇷🇺"),
     }
 
+
+    def start_login():
+        if page.client_storage.get("access_token") is not None:
+            page.on_login()  # Вызываем событие на успешный вход
+        else:
+            page.on_logout(None)
+            # page.on_logout()  # Вызываем событие на выход
+    
+    
+
+
     def update_language(e):
         global tr
-        current_lang = lang_dropdown.value
+        current_lang = lang.value
+        page.client_storage.set("current_lang", current_lang)
         tr = Translator(current_lang)
         update_ui()
+
+    def start_language():
+        global tr
+        if page.client_storage.get("current_lang") is not None:
+            current_lang = page.client_storage.get("current_lang")
+            
+        tr = Translator(current_lang)
 
     def update_ui():
         title.value = tr("welcome")
@@ -68,7 +86,6 @@ def main(page: ft.Page):
             show_message(response.json().get("message", "Error"))
 
     def handle_login(e):
-        nonlocal access_token
         email = username.value
         password_value = password.value
 
@@ -84,210 +101,128 @@ def main(page: ft.Page):
         if response.status_code == 200:
             access_token = response.json().get("access_token")
             show_message(tr("welcome") + f", {email}!", ft.colors.GREEN)
-            show_profile()
+            page.client_storage.set("access_token", access_token)
+            # show_profile()
+            page.on_login()  # Вызываем событие на успешный вход
         else:
             show_message(response.json().get("message", "Error"))
 
     def show_profile():
+
+        access_token = page.client_storage.get("access_token")
         headers = {"Authorization": f"Bearer {access_token}"}
         response = requests.get(f"{API_URL}/profile", headers=headers)
 
         if response.status_code == 200:
-            show_message(response.json().get("message", "Welcome!"), ft.colors.GREEN)
-        else:
-            show_message("Error loading profile", ft.colors.RED)
-        container.width = page.width * 3.2
-        container.height = page.height * 3.2
-        # Логотип (в качестве примера, можно заменить на любой логотип)
-        logo = ft.Image(src="https://via.placeholder.com/150", width=50, height=50)
-        # Панель навигации с кнопками
-        sidebar = ft.Container(
-            bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.BLUE_GREY_900),
-            blur=20,
-            border_radius=20,
-            width=page.width * 3.2,
-            height=60,
-            padding=ft.padding.only(left=20, right=20),
-            content=ft.Row(
-                [
-                    # Логотип слева
-                    logo,
-                    ft.Container(
-                        content=ft.Row(
-                            [
-                                ft.ElevatedButton(text="Home", width=100),
-                                ft.ElevatedButton(text="Profile", width=100),
-                                ft.ElevatedButton(text="Settings", width=100),
-                                ft.ElevatedButton(
-                                    text="Logout",
-                                    on_click=lambda e: page.go("/"),
-                                    bgcolor=ft.colors.RED_500,
-                                    color=ft.colors.WHITE,
-                                    height=50,
-                                    width=100
+            # Логотип (в качестве примера, можно заменить на любой логотип)
+            logo = ft.Image(src="https://via.placeholder.com/150", width=50, height=50)
+            def handle_color_click(e):
+                color = e.control.content.value
+                print(f"{color}.on_click")
+                page.update()
+
+            def handle_on_hover(e):
+                print(f"{e.control.content.value}.on_hover")
+
+            # Кнопки с подменю
+            menubar = ft.MenuBar(
+                    style=ft.MenuStyle(
+                        alignment=ft.alignment.top_right,
+                        bgcolor=ft.Colors.BLUE_GREY_900,
+                        mouse_cursor={
+                            ft.ControlState.HOVERED: ft.MouseCursor.WAIT,
+                            ft.ControlState.DEFAULT: ft.MouseCursor.ZOOM_OUT,
+                        }),
+                    controls=[
+                        ft.SubmenuButton(
+                            content=ft.Text(tr("BgColors")),
+                            controls=[
+                                ft.MenuItemButton(
+                                    content=ft.Text("Blue"),
+                                    leading=ft.Icon(ft.Icons.COLORIZE),
+                                    style=ft.ButtonStyle(bgcolor={ft.ControlState.HOVERED: ft.Colors.BLUE}),
+                                    on_click=handle_color_click,
+                                    on_hover=handle_on_hover,
                                 ),
-                            ],
-                            alignment=ft.MainAxisAlignment.END,
-                            spacing=10,
+                                ft.MenuItemButton(
+                                    content=ft.Text("Green"),
+                                    leading=ft.Icon(ft.Icons.COLORIZE),
+                                    style=ft.ButtonStyle(bgcolor={ft.ControlState.HOVERED: ft.Colors.GREEN}),
+                                    on_click=handle_color_click,
+                                    on_hover=handle_on_hover,
+                                ),
+                                ft.MenuItemButton(
+                                    content=ft.Text("Red"),
+                                    leading=ft.Icon(ft.Icons.COLORIZE),
+                                    style=ft.ButtonStyle(bgcolor={ft.ControlState.HOVERED: ft.Colors.RED}),
+                                    on_click=handle_color_click,
+                                    on_hover=handle_on_hover,
+                                )
+                            ]
                         ),
-                        expand=True,  # Контейнер, занимающий оставшееся пространство
-                    ),
-                ],
-                alignment=ft.MainAxisAlignment.START,  # Логотип слева
-                vertical_alignment=ft.CrossAxisAlignment.CENTER
+                    ]
+                )
+
+            # Кнопка для возврата на экран входа
+            back_button = ft.ElevatedButton(
+                text="Exit",
+                on_click=close_app,
+                bgcolor=ft.Colors.RED,
+                color=ft.Colors.WHITE,
+                height=50,
+                width=200
             )
-        )
 
-        data_1 = [
-            ft.LineChartData(
-                data_points=[
-                    ft.LineChartDataPoint(1, 1),
-                    ft.LineChartDataPoint(3, 1.5),
-                    ft.LineChartDataPoint(5, 1.4),
-                    ft.LineChartDataPoint(7, 3.4),
-                    ft.LineChartDataPoint(10, 2),
-                    ft.LineChartDataPoint(12, 2.2),
-                    ft.LineChartDataPoint(13, 1.8),
-                ],
-                stroke_width=8,
-                color=ft.Colors.LIGHT_GREEN,
-                curved=True,
-                stroke_cap_round=True,
-            ),
-            ft.LineChartData(
-                data_points=[
-                    ft.LineChartDataPoint(1, 1),
-                    ft.LineChartDataPoint(3, 2.8),
-                    ft.LineChartDataPoint(7, 1.2),
-                    ft.LineChartDataPoint(10, 2.8),
-                    ft.LineChartDataPoint(12, 2.6),
-                    ft.LineChartDataPoint(13, 3.9),
-                ],
-                color=ft.Colors.PINK,
-                below_line_bgcolor=ft.Colors.with_opacity(0, ft.Colors.PINK),
-                stroke_width=8,
-                curved=True,
-                stroke_cap_round=True,
-            ),
-            ft.LineChartData(
-                data_points=[
-                    ft.LineChartDataPoint(1, 2.8),
-                    ft.LineChartDataPoint(3, 1.9),
-                    ft.LineChartDataPoint(6, 3),
-                    ft.LineChartDataPoint(10, 1.3),
-                    ft.LineChartDataPoint(13, 2.5),
-                ],
-                color=ft.Colors.CYAN,
-                stroke_width=8,
-                curved=True,
-                stroke_cap_round=True,
-            ),
-        ]
+            # Панель навигации
+            navbar = ft.Container(
+                bgcolor=ft.Colors.with_opacity(0.6, ft.Colors.BLUE_GREY_900),
+                blur=20,
+                border_radius=20,
+                width=page.height * 3.2,
+                content=ft.Row(
+                    controls=[
+                        logo,
+                        ft.Container(
+                            content=ft.Row(controls=[
+                                menubar,
+                                back_button,
+                                ft.Container(
+                                    width=20,
+                                    height=20,
+                                )
+                            ]
+                            )
 
-        chart = ft.LineChart(
-            data_series=data_1,
-            border=ft.Border(
-                bottom=ft.BorderSide(4, ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE))
-            ),
-            left_axis=ft.ChartAxis(
-                labels=[
-                    ft.ChartAxisLabel(
-                        value=1,
-                        label=ft.Text("1m", size=14, weight=ft.FontWeight.BOLD),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=2,
-                        label=ft.Text("2m", size=14, weight=ft.FontWeight.BOLD),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=3,
-                        label=ft.Text("3m", size=14, weight=ft.FontWeight.BOLD),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=4,
-                        label=ft.Text("4m", size=14, weight=ft.FontWeight.BOLD),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=5,
-                        label=ft.Text("5m", size=14, weight=ft.FontWeight.BOLD),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=6,
-                        label=ft.Text("6m", size=14, weight=ft.FontWeight.BOLD),
-                    ),
-                ],
-                labels_size=40,
-            ),
-            bottom_axis=ft.ChartAxis(
-                labels=[
-                    ft.ChartAxisLabel(
-                        value=2,
-                        label=ft.Container(
-                            ft.Text(
-                                "SEP",
-                                size=16,
-                                weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE),
-                            ),
-                            margin=ft.margin.only(top=10),
-                        ),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=7,
-                        label=ft.Container(
-                            ft.Text(
-                                "OCT",
-                                size=16,
-                                weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE),
-                            ),
-                            margin=ft.margin.only(top=10),
-                        ),
-                    ),
-                    ft.ChartAxisLabel(
-                        value=12,
-                        label=ft.Container(
-                            ft.Text(
-                                "DEC",
-                                size=16,
-                                weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE),
-                            ),
-                            margin=ft.margin.only(top=10),
-                        ),
-                    ),
-                ],
-                labels_size=32,
-            ),
-            tooltip_bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.BLUE_GREY),
-            min_y=0,
-            max_y=4,
-            min_x=0,
-            max_x=14,
-            expand=True,
-        )
-        chart_cont = ft.Container(
-            bgcolor=ft.Colors.with_opacity(0.6, ft.Colors.BLUE_GREY_900,),
-            blur = 20,
-            border_radius=20,
-            width=page.height*3.2,
-            height=200,
-            padding=20,
-            content=chart
-        )
-        profile_content = ft.Column(
-            [   
-                sidebar,
-                ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                chart_cont,
-            ],
-            alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    spacing=20
+                )
+            )
 
-        # Обновляем контейнер с профилем
-        container.content = profile_content
+            
+            # Основной контент профиля
+            profile_content = ft.Column(
+                [
+                    navbar,
+                    ft.Text("Welcome!", size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            )
+
+            # Обновляем контейнер с профилем
+            container.width = 2400
+            container.height = 1800
+            container.content = profile_content
+
+        else:
+
+            page.on_logout(None)
+
         page.update()
+        
+        
 
     title = ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
 
@@ -306,17 +241,11 @@ def main(page: ft.Page):
             show_message(tr("invalid_password"), ft.colors.RED)
         else:
             show_message("")
+
+    def close_app(e):
+        page.on_logout(None) # Вызываем событие на выход
+        page.session.clear()  # Очищаем данные сессии
     
-    # Динамическое обновление высоты
-    def on_resize(e):
-        page_height = page.height  # Обновляем высоту страницы
-
-        # Обновляем расположение элементов в зависимости от доступного пространства
-        # Например, сдвигаем элементы на страницу в зависимости от высоты
-        container.height = page_height - 100  # Делаем пространство гибким для ввода
-
-        page.update()
-
 
     title = ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
 
@@ -362,33 +291,39 @@ def main(page: ft.Page):
         height=50,
         width=200
     )
+    def lang_dropdown(page):
+        if page.client_storage.get("current_lang") is not None:
+            current_lang = page.client_storage.get("current_lang")
 
-    lang_dropdown = ft.Dropdown(
-        value=current_lang,
-        options=[
-            ft.dropdown.Option(k, text=f"{flag} {name}")
-            for k, (name, flag) in languages.items()
-        ],
-        on_change=update_language,
-        bgcolor=ft.colors.BLUE_GREY_900,
-        color=ft.colors.WHITE,
-        focused_bgcolor=ft.colors.BLUE_700,
-        border_width=0,  # Убираем обводку
-        # border_color=None,  # Убираем обводку
-        # focused_border_color=None,  # Убираем обводку при 
-        border_radius=20,
-        text_size=16,
-        content_padding=10
-    )
+        return ft.Dropdown(
+            
+            value=current_lang,
+            options=[
+                ft.dropdown.Option(k, text=f"{flag} {name}")
+                for k, (name, flag) in languages.items()
+            ],
+            on_change=update_language,
+            bgcolor=ft.colors.BLUE_GREY_900,
+            color=ft.colors.WHITE,
+            focused_bgcolor=ft.colors.BLUE_700,
+            border_width=0,  # Убираем обводку
+            # border_color=None,  # Убираем обводку
+            # focused_border_color=None,  # Убираем обводку при 
+            border_radius=20,
+            text_size=16,
+            content_padding=10,
+        )
+
+    lang = lang_dropdown(page)
 
     container = ft.Container(
-        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_900,),
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_900),
         blur = 20,
         width=350,
         height=415,
-        border_radius=20,
+        # border_radius=20,
         padding=20,
-        animate=ft.Animation(duration=2050, curve="decelerate"),
+        animate=ft.Animation(duration=850, curve="decelerate"),
         content=ft.Column([
             title,
             username,
@@ -396,15 +331,42 @@ def main(page: ft.Page):
             msg,
             login_btn,
             register_btn,
-            lang_dropdown,
+            lang,
             
         ],
         
         alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        animate_opacity=ft.animation.Animation(5000, ft.AnimationCurve.EASE_IN_OUT),  # Анимация прозрачности контента
+        
         ),
         
     )
+    
+
+
+    def show_login_screen(e):
+        
+        profile_content = ft.Column(
+            [
+                title,
+                username,
+                password,
+                msg,
+                login_btn,
+                register_btn,
+                lang,
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        )
+        # Обновляем контейнер с профилем
+        container.width = 350
+        container.height = 415
+        container.content = profile_content
+        
+
+        page.update()
 
     background = ft.Image(
             src="/image/background.jpg",  # Путь к изображению
@@ -426,9 +388,16 @@ def main(page: ft.Page):
             expand=True,                   # Растягиваем Stack на весь доступный размер
             
         )
+    
 
     page.add(body)
     update_ui()
-    page.on_resize = on_resize
-
+    # show_profile()
+    page.on_logout = show_login_screen
+    page.on_login = show_profile
+    start_login()
+    start_language()
+    
+   
 ft.app(target=main)
+# ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
