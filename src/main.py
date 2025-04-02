@@ -1,9 +1,11 @@
 import flet as ft
 import re
 import requests
-from translations import get_translations
+from translations import Translator
 
 API_URL = "https://alexsandr7779.pythonanywhere.com"  # Укажи здесь свой API, если он на другом сервере
+
+tr = Translator()
 
 def main(page: ft.Page):
     page.title = "Авторизация"
@@ -23,17 +25,17 @@ def main(page: ft.Page):
     }
 
     def update_language(e):
-        nonlocal current_lang
+        global tr
         current_lang = lang_dropdown.value
+        tr = Translator(current_lang)
         update_ui()
 
     def update_ui():
-        tr = get_translations(current_lang)
-        title.value = tr["welcome"]
-        username.label = tr["username"]
-        password.label = tr["password"]
-        login_btn.text = tr["login"]
-        register_btn.text = tr["register"]
+        title.value = tr("welcome")
+        username.label = tr("username")
+        password.label = tr("password")
+        login_btn.text = tr("login")
+        register_btn.text = tr("register")
         page.update()
 
     def show_message(text, color=ft.colors.RED):
@@ -48,68 +50,260 @@ def main(page: ft.Page):
         return len(password) >= 6 and re.search(r"[a-zA-Z]", password) and re.search(r"\d", password)
 
     def handle_register(e):
-        tr = get_translations(current_lang)
         email = username.value
         password_value = password.value
 
         if not is_valid_email(email):
-            show_message(tr.get("invalid_email", "invalid_email"))
+            show_message(tr("invalid_email"))
             return
         if not is_valid_password(password_value):
-            show_message(tr.get("invalid_password", "invalid_password"))
+            show_message(tr("invalid_password"))
             return
 
         response = requests.post(f"{API_URL}/register", data={"username": email, "password": password_value})
 
         if response.status_code == 201:
-            show_message(tr.get("reg_success", "reg_success"), ft.colors.GREEN)
+            show_message(tr("reg_success"), ft.colors.GREEN)
         else:
             show_message(response.json().get("message", "Error"))
 
     def handle_login(e):
         nonlocal access_token
-        tr = get_translations(current_lang)
         email = username.value
         password_value = password.value
 
         if not is_valid_email(email):
-            show_message(tr.get("invalid_email", "invalid_email"))
+            show_message(tr("invalid_email"))
             return
         if not is_valid_password(password_value):
-            show_message(tr.get("invalid_password", "invalid_password"))
+            show_message(tr("invalid_password"))
             return
 
         response = requests.post(f"{API_URL}/login", data={"username": email, "password": password_value})
 
         if response.status_code == 200:
             access_token = response.json().get("access_token")
-            show_message(tr.get("welcome", "welcome") + f", {email}!", ft.colors.GREEN)
-            load_profile()
+            show_message(tr("welcome") + f", {email}!", ft.colors.GREEN)
+            show_profile()
         else:
             show_message(response.json().get("message", "Error"))
 
-    def load_profile():
-        nonlocal access_token
-        if not access_token:
-            return
-
+    def show_profile():
         headers = {"Authorization": f"Bearer {access_token}"}
         response = requests.get(f"{API_URL}/profile", headers=headers)
 
         if response.status_code == 200:
             show_message(response.json().get("message", "Welcome!"), ft.colors.GREEN)
         else:
-            show_message("Ошибка при загрузке профиля")
+            show_message("Error loading profile", ft.colors.RED)
+        container.width = page.width * 3.2
+        container.height = page.height * 3.2
+        # Логотип (в качестве примера, можно заменить на любой логотип)
+        logo = ft.Image(src="https://via.placeholder.com/150", width=50, height=50)
+        # Панель навигации с кнопками
+        sidebar = ft.Container(
+            bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.BLUE_GREY_900),
+            blur=20,
+            border_radius=20,
+            width=page.width * 3.2,
+            height=60,
+            padding=ft.padding.only(left=20, right=20),
+            content=ft.Row(
+                [
+                    # Логотип слева
+                    logo,
+                    ft.Container(
+                        content=ft.Row(
+                            [
+                                ft.ElevatedButton(text="Home", width=100),
+                                ft.ElevatedButton(text="Profile", width=100),
+                                ft.ElevatedButton(text="Settings", width=100),
+                                ft.ElevatedButton(
+                                    text="Logout",
+                                    on_click=lambda e: page.go("/"),
+                                    bgcolor=ft.colors.RED_500,
+                                    color=ft.colors.WHITE,
+                                    height=50,
+                                    width=100
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.END,
+                            spacing=10,
+                        ),
+                        expand=True,  # Контейнер, занимающий оставшееся пространство
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.START,  # Логотип слева
+                vertical_alignment=ft.CrossAxisAlignment.CENTER
+            )
+        )
+
+        data_1 = [
+            ft.LineChartData(
+                data_points=[
+                    ft.LineChartDataPoint(1, 1),
+                    ft.LineChartDataPoint(3, 1.5),
+                    ft.LineChartDataPoint(5, 1.4),
+                    ft.LineChartDataPoint(7, 3.4),
+                    ft.LineChartDataPoint(10, 2),
+                    ft.LineChartDataPoint(12, 2.2),
+                    ft.LineChartDataPoint(13, 1.8),
+                ],
+                stroke_width=8,
+                color=ft.Colors.LIGHT_GREEN,
+                curved=True,
+                stroke_cap_round=True,
+            ),
+            ft.LineChartData(
+                data_points=[
+                    ft.LineChartDataPoint(1, 1),
+                    ft.LineChartDataPoint(3, 2.8),
+                    ft.LineChartDataPoint(7, 1.2),
+                    ft.LineChartDataPoint(10, 2.8),
+                    ft.LineChartDataPoint(12, 2.6),
+                    ft.LineChartDataPoint(13, 3.9),
+                ],
+                color=ft.Colors.PINK,
+                below_line_bgcolor=ft.Colors.with_opacity(0, ft.Colors.PINK),
+                stroke_width=8,
+                curved=True,
+                stroke_cap_round=True,
+            ),
+            ft.LineChartData(
+                data_points=[
+                    ft.LineChartDataPoint(1, 2.8),
+                    ft.LineChartDataPoint(3, 1.9),
+                    ft.LineChartDataPoint(6, 3),
+                    ft.LineChartDataPoint(10, 1.3),
+                    ft.LineChartDataPoint(13, 2.5),
+                ],
+                color=ft.Colors.CYAN,
+                stroke_width=8,
+                curved=True,
+                stroke_cap_round=True,
+            ),
+        ]
+
+        chart = ft.LineChart(
+            data_series=data_1,
+            border=ft.Border(
+                bottom=ft.BorderSide(4, ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE))
+            ),
+            left_axis=ft.ChartAxis(
+                labels=[
+                    ft.ChartAxisLabel(
+                        value=1,
+                        label=ft.Text("1m", size=14, weight=ft.FontWeight.BOLD),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=2,
+                        label=ft.Text("2m", size=14, weight=ft.FontWeight.BOLD),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=3,
+                        label=ft.Text("3m", size=14, weight=ft.FontWeight.BOLD),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=4,
+                        label=ft.Text("4m", size=14, weight=ft.FontWeight.BOLD),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=5,
+                        label=ft.Text("5m", size=14, weight=ft.FontWeight.BOLD),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=6,
+                        label=ft.Text("6m", size=14, weight=ft.FontWeight.BOLD),
+                    ),
+                ],
+                labels_size=40,
+            ),
+            bottom_axis=ft.ChartAxis(
+                labels=[
+                    ft.ChartAxisLabel(
+                        value=2,
+                        label=ft.Container(
+                            ft.Text(
+                                "SEP",
+                                size=16,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE),
+                            ),
+                            margin=ft.margin.only(top=10),
+                        ),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=7,
+                        label=ft.Container(
+                            ft.Text(
+                                "OCT",
+                                size=16,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE),
+                            ),
+                            margin=ft.margin.only(top=10),
+                        ),
+                    ),
+                    ft.ChartAxisLabel(
+                        value=12,
+                        label=ft.Container(
+                            ft.Text(
+                                "DEC",
+                                size=16,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.with_opacity(0.5, ft.Colors.ON_SURFACE),
+                            ),
+                            margin=ft.margin.only(top=10),
+                        ),
+                    ),
+                ],
+                labels_size=32,
+            ),
+            tooltip_bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.BLUE_GREY),
+            min_y=0,
+            max_y=4,
+            min_x=0,
+            max_x=14,
+            expand=True,
+        )
+        chart_cont = ft.Container(
+            bgcolor=ft.Colors.with_opacity(0.6, ft.Colors.BLUE_GREY_900,),
+            blur = 20,
+            border_radius=20,
+            width=page.height*3.2,
+            height=200,
+            padding=20,
+            content=chart
+        )
+        profile_content = ft.Column(
+            [   
+                sidebar,
+                ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
+                chart_cont,
+            ],
+            alignment=ft.MainAxisAlignment.START,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+
+        # Обновляем контейнер с профилем
+        container.content = profile_content
+        page.update()
+
+    title = ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
 
     def validate_email(value):
-        if not is_valid_email(value):
-            show_message("Некорректный email")
+        if not value:  # Если поле пустое
+            show_message("")
+        elif not is_valid_email(value):  # Если email некорректный
+            show_message(tr("invalid_email"), ft.colors.RED)
         else:
             show_message("")
 
     def validate_password(value):
-        if not is_valid_password(value):
-            show_message("Пароль должен содержать минимум 6 символов, цифры и буквы")
+        if not value:  # Если поле пустое
+            show_message("")
+        elif not is_valid_password(value):
+            show_message(tr("invalid_password"), ft.colors.RED)
         else:
             show_message("")
     
@@ -123,14 +317,12 @@ def main(page: ft.Page):
 
         page.update()
 
-    tr = get_translations(current_lang)
 
-
-    title = ft.Text(tr["welcome"], size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
+    title = ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE)
 
     username = ft.TextField(
-        label=tr["username"],
-        width=200,
+        label=tr("username"),
+        width=300,
         border_radius=20,
         bgcolor=ft.colors.WHITE10,
         border_color=ft.colors.BLUE_500,
@@ -140,9 +332,9 @@ def main(page: ft.Page):
     )
 
     password = ft.TextField(
-        label=tr["password"],
+        label=tr("password"),
         password=True,
-        width=200,
+        width=300,
         border_radius=20,
         bgcolor=ft.colors.WHITE10,
         border_color=ft.colors.BLUE_500,
@@ -154,7 +346,7 @@ def main(page: ft.Page):
     msg = ft.Text(color=ft.colors.WHITE)
 
     login_btn = ft.ElevatedButton(
-        text=tr["login"],
+        text=tr("login"),
         on_click=handle_login,
         bgcolor=ft.colors.BLUE_500,
         color=ft.colors.WHITE,
@@ -163,7 +355,7 @@ def main(page: ft.Page):
     )
 
     register_btn = ft.ElevatedButton(
-        text=tr["register"],
+        text=tr("register"),
         on_click=handle_register,
         bgcolor=ft.colors.GREEN_500,
         color=ft.colors.WHITE,
@@ -196,6 +388,7 @@ def main(page: ft.Page):
         height=415,
         border_radius=20,
         padding=20,
+        animate=ft.Animation(duration=2050, curve="decelerate"),
         content=ft.Column([
             title,
             username,
@@ -205,7 +398,11 @@ def main(page: ft.Page):
             register_btn,
             lang_dropdown,
             
-        ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        ],
+        
+        alignment=ft.MainAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
         
     )
 
@@ -219,8 +416,8 @@ def main(page: ft.Page):
         )
 
     body = ft.Stack(
-            [
-                background,               # Добавляем фон первым
+            [   
+                background,              # Добавляем фон первым
                 container                 # Контейнер с остальными элементами
             ],
             width=page.width*3.2,
