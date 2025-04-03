@@ -68,7 +68,7 @@ def main(page: ft.Page):
         menubar.controls[0].controls[2].content = ft.Text(tr("logout"))  # Выход
         page.update()
 
-    def show_message(text, color=ft.Colors.RED):
+    def show_message(text, color=ft.Colors.ERROR):
         msg.value = text
         msg.color = color
         page.update()
@@ -94,7 +94,7 @@ def main(page: ft.Page):
         response = requests.post(f"{API_URL}/register", data={"username": email, "password": password_value})
 
         if response.status_code == 201:
-            show_message(tr("reg_success"), ft.Colors.GREEN)
+            show_message(tr("reg_success"), ft.Colors.LIGHT_GREEN_400)
         else:
             show_message(response.json().get("message", "Error"))
 
@@ -115,7 +115,7 @@ def main(page: ft.Page):
 
         if response.status_code == 200:
             access_token = response.json().get("access_token")
-            show_message(tr("welcome") + f", {email}!", ft.Colors.GREEN)
+            show_message(tr("welcome") + f", {email}!", ft.Colors.LIGHT_GREEN_400)
             page.client_storage.set("access_token", access_token)
             # show_profile()
             page.on_login()  # Вызываем событие на успешный вход
@@ -159,7 +159,7 @@ def main(page: ft.Page):
         if not value:  # Если поле пустое
             show_message("")
         elif not is_valid_email(value):  # Если email некорректный
-            show_message(tr("invalid_email"), ft.Colors.RED)
+            show_message(tr("invalid_email"), ft.Colors.ERROR)
         else:
             show_message("")
 
@@ -167,7 +167,7 @@ def main(page: ft.Page):
         if not value:  # Если поле пустое
             show_message("")
         elif not is_valid_password(value):
-            show_message(tr("invalid_password"), ft.Colors.RED)
+            show_message(tr("invalid_password"), ft.Colors.ERROR)
         else:
             show_message("")
 
@@ -266,7 +266,7 @@ def main(page: ft.Page):
                                         weight=ft.FontWeight.NORMAL,  # Жирность текста
                                         font_family="Arial",  # Шрифт текста
                                     ),
-                                    bgcolor={ft.ControlState.HOVERED: ft.Colors.RED},
+                                    bgcolor={ft.ControlState.HOVERED: ft.Colors.RED_600},
                                     elevation=0,
                                     shape=ft.RoundedRectangleBorder(radius=0),
                                 ),
@@ -432,5 +432,5 @@ def main(page: ft.Page):
     
     
    
-ft.app(target=main)
-# ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
+# ft.app(target=main)
+ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
