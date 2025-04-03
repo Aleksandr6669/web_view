@@ -299,6 +299,7 @@ def main(page: ft.Page):
                                     height=20,
                                 )
                             ],
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,  # Центрируем элементы по вертикали
                             alignment=ft.MainAxisAlignment.CENTER,  # Центрируем элементы в строке
                             )
 
