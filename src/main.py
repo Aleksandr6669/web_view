@@ -136,7 +136,7 @@ def main(page: ft.Page):
                         }),
                     controls=[
                         ft.SubmenuButton(
-                            content=ft.Text(tr("BgColors")),
+                            content=ft.Text("BgColors"),
                             controls=[
                                 ft.MenuItemButton(
                                     content=ft.Text("Blue"),
@@ -320,34 +320,6 @@ def main(page: ft.Page):
 
     lang = lang_dropdown(page)
 
-    container = ft.Container(
-        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_900),
-        blur = 20,
-        width=350,
-        height=415,
-        # border_radius=20,
-        padding=20,
-        animate=ft.Animation(duration=850, curve="decelerate"),
-        content=ft.Column([
-            title,
-            username,
-            password,
-            msg,
-            login_btn,
-            register_btn,
-            lang,
-            
-        ],
-        
-        alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        animate_opacity=ft.animation.Animation(5000, ft.AnimationCurve.EASE_IN_OUT),  # Анимация прозрачности контента
-        
-        ),
-        
-    )
-    
-
 
     def show_login_screen(e):
         
@@ -371,6 +343,28 @@ def main(page: ft.Page):
         
 
         page.update()
+
+
+
+    container = ft.Container(
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_900),
+        blur = 20,
+        width=350,
+        height=415,
+        # border_radius=20,
+        padding=20,
+        animate=ft.Animation(duration=850, curve="decelerate"),
+        content=ft.Column([
+
+        ],
+
+        alignment=ft.MainAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        animate_opacity=ft.animation.Animation(5000, ft.AnimationCurve.EASE_IN_OUT),  # Анимация прозрачности контента
+
+        ),
+
+    )
 
     background = ft.Image(
             src="/image/background.jpg",  # Путь к изображению
