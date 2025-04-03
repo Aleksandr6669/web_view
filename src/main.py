@@ -288,6 +288,7 @@ def main(page: ft.Page):
                     controls=[
                         logo,
                         ft.Container(
+                            alignment=ft.alignment.center,  # Центрируем содержимое контейнера
                             content=ft.Row(
                                 height=40,
                                 controls=[
@@ -297,12 +298,14 @@ def main(page: ft.Page):
                                     width=40,
                                     height=20,
                                 )
-                            ]
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,  # Центрируем элементы в строке
                             )
 
                         )
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,  # Центрируем элементы по вертикали
                     spacing=20
                 )
             )
