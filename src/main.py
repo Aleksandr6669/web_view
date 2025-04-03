@@ -295,7 +295,7 @@ def main(page: ft.Page):
                                 lang,
                                 menubar,
                                 ft.Container(
-                                    width=40,
+                                    width=20,
                                     height=20,
                                 )
                             ],
