@@ -15,7 +15,7 @@ def main(page: ft.Page):
     page.bgcolor = ft.colors.TRANSPARENT
     page.padding = 0
 
-    current_lang = "en"
+    
 
     languages = {
         "en": ("English", "🇬🇧"),
@@ -45,7 +45,8 @@ def main(page: ft.Page):
         global tr
         if page.client_storage.get("current_lang") is not None:
             current_lang = page.client_storage.get("current_lang")
-            
+        else:
+            current_lang = "en"
         tr = Translator(current_lang)
 
     def update_ui():
@@ -243,6 +244,7 @@ def main(page: ft.Page):
             show_message("")
 
     def close_app(e):
+        page.client_storage.remove("access_token")  # Удаляем токен доступа
         page.on_logout(None) # Вызываем событие на выход
         page.session.clear()  # Очищаем данные сессии
     
@@ -294,6 +296,8 @@ def main(page: ft.Page):
     def lang_dropdown(page):
         if page.client_storage.get("current_lang") is not None:
             current_lang = page.client_storage.get("current_lang")
+        else:
+            current_lang = "en"
 
         return ft.Dropdown(
             
