@@ -375,7 +375,7 @@ def main(page: ft.Page):
         # Обновляем контейнер с профилем
         container.padding=20
         container.width = 350
-        container.height = 435
+        container.height = 440
         container.content = forma_content
         
 
