@@ -2,7 +2,7 @@ class Translator:
     translations = {
         "ru": {
             "welcome": "Добро пожаловать!",
-            "username": "Логин",
+            "username": "Логин (Email)",
             "password": "Пароль",
             "login": "Войти",
             "register": "Регистрация",
@@ -19,7 +19,7 @@ class Translator:
         },
         "en": {
             "welcome": "Welcome!",
-            "username": "Username",
+            "username": "Username (Email)",
             "password": "Password",
             "login": "Login",
             "register": "Register",
@@ -36,7 +36,7 @@ class Translator:
         },
         "ua": {
             "welcome": "Ласкаво просимо!",
-            "username": "Логін",
+            "username": "Логін (Email)",
             "password": "Пароль",
             "login": "Увійти",
             "register": "Реєстрація",
@@ -53,7 +53,7 @@ class Translator:
         },
         "fr": {
             "welcome": "Bienvenue !",
-            "username": "Nom d'utilisateur",
+            "username": "Nom d'utilisateur (Email)",
             "password": "Mot de passe",
             "login": "Connexion",
             "register": "S'inscrire",
@@ -70,7 +70,7 @@ class Translator:
         },
         "zh": {
             "welcome": "欢迎！",
-            "username": "用户名",
+            "username": "用户名 (Email)",
             "password": "密码",
             "login": "登录",
             "register": "注册",

@@ -332,6 +332,7 @@ def main(page: ft.Page):
         text_style=ft.TextStyle(color=ft.Colors.WHITE, size=14),
         on_change=lambda e: validate_email(username.value)
     )
+    username.auto_focus = True
 
     password = ft.TextField(
         label=tr("password"),
@@ -446,5 +447,5 @@ def main(page: ft.Page):
     
     
    
-ft.app(target=main)
-# ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
+# ft.app(target=main)
+ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
