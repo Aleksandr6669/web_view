@@ -191,9 +191,12 @@ def main(page: ft.Page):
         print(f".on_hover")
 
     def lang_dropdown(page):
-        if page.client_storage.get("current_lang") is not None:
-            current_lang = page.client_storage.get("current_lang")
-        else:
+        try:
+            if page.client_storage.get("current_lang") is not None:
+                current_lang = page.client_storage.get("current_lang")
+            else:
+                current_lang = "en"
+        except:
             current_lang = "en"
 
         return ft.Dropdown(
