@@ -446,5 +446,5 @@ def main(page: ft.Page):
     
     
    
-# ft.app(target=main)
-ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
+ft.app(target=main)
+# ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
