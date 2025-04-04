@@ -1,7 +1,7 @@
 class Translator:
     translations = {
         "ru": {
-            "welcome": "Добро пожаловать!",
+            "welcome": "Добро пожаловать в Поток!",
             "username": "Логин (Email)",
             "password": "Пароль",
             "login": "Войти",
@@ -18,7 +18,7 @@ class Translator:
             "logout": "Выход"
         },
         "en": {
-            "welcome": "Welcome!",
+            "welcome": "Welcome to Stream!",
             "username": "Username (Email)",
             "password": "Password",
             "login": "Login",
@@ -35,7 +35,7 @@ class Translator:
             "logout": "Logout"
         },
         "ua": {
-            "welcome": "Ласкаво просимо!",
+            "welcome": "Ласкаво просимо в Потік!",
             "username": "Логін (Email)",
             "password": "Пароль",
             "login": "Увійти",
@@ -52,7 +52,7 @@ class Translator:
             "logout": "Вихід"
         },
         "fr": {
-            "welcome": "Bienvenue !",
+            "welcome": "Bienvenue dans Flux!",
             "username": "Nom d'utilisateur (Email)",
             "password": "Mot de passe",
             "login": "Connexion",
@@ -69,7 +69,7 @@ class Translator:
             "logout": "Déconnexion"
         },
         "zh": {
-            "welcome": "欢迎！",
+            "welcome": "欢迎来到流!",
             "username": "用户名 (Email)",
             "password": "密码",
             "login": "登录",
@@ -86,7 +86,6 @@ class Translator:
             "logout": "退出"
         }
     }
-
 
 
     def __init__(self, lang="en"):
