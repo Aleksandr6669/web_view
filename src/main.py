@@ -44,6 +44,7 @@ def main(page: ft.Page):
                 current_lang = page.client_storage.get("current_lang")
             else:
                 current_lang = "en"
+                page.client_storage.set("current_lang", current_lang)
         except:
             current_lang = "en"
 
