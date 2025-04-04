@@ -5,7 +5,9 @@ from translations import Translator
 
 API_URL = "https://alexsandr7779.pythonanywhere.com"  # Укажи здесь свой API, если он на другом сервере
 
-tr = Translator()
+
+current_lang = "en"
+tr = Translator(current_lang)
 
 def main(page: ft.Page):
     page.title = "Авторизация"
@@ -29,17 +31,24 @@ def main(page: ft.Page):
 
     def start_login():
         global tr
-        if page.client_storage.get("access_token") is not None and page.client_storage.get("remember_me") == True:
-            page.on_login()  # Вызываем событие на успешный вход
-        else:
+        try:
+            if page.client_storage.get("access_token") is not None and page.client_storage.get("remember_me") == True:
+                page.on_login()  # Вызываем событие на успешный вход
+            else:
+                page.on_logout(None)
+                # page.on_logout()  # Вызываем событие на 
+        except:
             page.on_logout(None)
-            # page.on_logout()  # Вызываем событие на выход
-       
-        if page.client_storage.get("current_lang") is not None:
-            current_lang = page.client_storage.get("current_lang")
-        else:
+        try:
+            if page.client_storage.get("current_lang") is not None:
+                current_lang = page.client_storage.get("current_lang")
+            else:
+                current_lang = "en"
+        except:
             current_lang = "en"
+
         tr = Translator(current_lang)
+
         update_ui()
     
     
@@ -124,15 +133,12 @@ def main(page: ft.Page):
         password.value = ""
 
     def show_profile():
-
         access_token = page.client_storage.get("access_token")
         headers = {"Authorization": f"Bearer {access_token}"}
         response = requests.get(f"{API_URL}/profile", headers=headers)
 
-        if response.status_code == 200:
-            
 
-            
+        if response.status_code == 200:
             # Основной контент профиля
             profile_content = ft.Column(
                 [
