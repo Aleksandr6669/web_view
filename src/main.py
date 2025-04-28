@@ -316,7 +316,7 @@ def main(page: ft.Page):
         on_change=lambda e: validate_password(password.value)
     )
 
-    msg = ft.Text(color=ft.Colors.WHITE)
+    msg = ft.Text(color=ft.Colors.WHITE, height=50)
 
     login_btn = ft.ElevatedButton(
         text=tr("login"),
@@ -361,7 +361,7 @@ def main(page: ft.Page):
         # Обновляем контейнер с профилем
         container.padding=20
         container.width = 355
-        container.height = 460
+        container.height = 470
         container.content = forma_content
         
 
