@@ -20,11 +20,10 @@ def main(page: ft.Page):
     
 
     languages = {
-        "en": ("English", "🇬🇧"),
-        "ua": ("Українська", "🇺🇦"),
-        "fr": ("Français", "🇫🇷"),
+        "en": ("EN", "🇬🇧"),
+        "ua": ("UA", "🇺🇦"),
+        "fr": ("FR", "🇫🇷"),
         "zh": ("中文", "🇨🇳"),
-        # "ru": ("Русский", "🇷🇺"),
     }
 
 
@@ -71,11 +70,16 @@ def main(page: ft.Page):
         register_btn.text = tr("register")
         register_btn.text = tr("register")
         remember_me.label = tr("remember_me")
-        # Обновляем элементы в menubar
-        menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
-        menubar.controls[0].controls[0].content = ft.Text(tr("profile"))  # Профиль
-        menubar.controls[0].controls[1].content = ft.Text(tr("settings"))  # Настройки
-        menubar.controls[0].controls[2].content = ft.Text(tr("logout"))  # Выход
+        # # Обновляем элементы в menubar
+        # menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
+        # menubar.controls[0].controls[0].content = ft.Text(tr("profile"))  # Профиль
+        # menubar.controls[0].controls[1].content = ft.Text(tr("settings"))  # Настройки
+        # menubar.controls[0].controls[2].content = ft.Text(tr("logout"))  # Выход
+
+        menubar.items[0].text = tr("profile")    # Профиль
+        menubar.items[1].text = tr("settings")   # Настройки
+        menubar.items[3].text = tr("logout")     # Выход
+
         page.update()
 
     def show_message(text, color=ft.Colors.ERROR):
@@ -215,7 +219,7 @@ def main(page: ft.Page):
             border_radius=20,
             text_size=12,
             content_padding=0,
-            width=140,
+            width=90,
 
         )
 
@@ -226,67 +230,33 @@ def main(page: ft.Page):
     # Предположим, у вас уже есть логотип (например, изображение или текст)
     logo = ft.Image(src="icon.png", width=100, height=50)
 
-    menubar = ft.MenuBar(
-                controls=[
-                    ft.SubmenuButton(
-                        height=30,
-                        animate_size=3000,
-                        content=ft.Text(tr("menu")),
-                        controls=[
-                            ft.MenuItemButton(
-                                content=ft.Text(tr("profile")),
-                                leading=ft.Icon(ft.Icons.PERSON),
-                                on_click=handle_color_click,
-                                style=ft.ButtonStyle(
-                                    text_style=ft.TextStyle(
-                                        color=ft.Colors.WHITE,  # Цвет текста
-                                        size=12,  # Размер текста
-                                        weight=ft.FontWeight.NORMAL,  # Жирность текста
-                                        font_family="Arial",  # Шрифт текста
-                                    ),
-                                    bgcolor=ft.Colors.BLACK54,  # Тусклый цвет текста
-                                    elevation=0,  # Без тени
-                                    shape=ft.RoundedRectangleBorder(radius=0),  # Закругленные углы
-                                )
-                            ),
-                            ft.MenuItemButton(
-                                content=ft.Text(tr("settings")),
-                                leading=ft.Icon(ft.Icons.SETTINGS),
-                                on_click=handle_color_click,
+    avatar_url = "avatar.png"
+    menubar = ft.PopupMenuButton(
+        # Содержимое кнопки — тот самый Stack, который ты отправил
+        content=ft.Stack(
+            [
+                ft.CircleAvatar(foreground_image_src=avatar_url),
+                ft.Container(
+                    content=ft.CircleAvatar(bgcolor=ft.colors.GREEN, radius=5),
+                    alignment=ft.alignment.bottom_left,
+                ),
+            ],
+            width=40,
+            height=40,
+        ),
 
-                                style=ft.ButtonStyle(
-                                    text_style=ft.TextStyle(
-                                        color=ft.Colors.WHITE,  # Цвет текста
-                                        size=12,  # Размер текста
-                                        weight=ft.FontWeight.NORMAL,  # Жирность текста
-                                        font_family="Arial",  # Шрифт текста
-                                    ),
-                                    bgcolor=ft.Colors.BLACK54,
-                                    elevation=0,
-                                    shape=ft.RoundedRectangleBorder(radius=0),
-                                )
-                            ),
-                            ft.MenuItemButton(
-                                content=ft.Text(tr("logout")),
-                                leading=ft.Icon(ft.Icons.EXIT_TO_APP),  # Иконка для выхода
-                                style=ft.ButtonStyle(
-                                    text_style=ft.TextStyle(
-                                        color=ft.Colors.WHITE,  # Цвет текста
-                                        size=12,  # Размер текста
-                                        weight=ft.FontWeight.NORMAL,  # Жирность текста
-                                        font_family="Arial",  # Шрифт текста
-                                    ),
-                                    bgcolor={ft.ControlState.HOVERED: ft.Colors.RED_600},
-                                    elevation=0,
-                                    shape=ft.RoundedRectangleBorder(radius=0),
-                                ),
-                                on_click=close_app,
-                            )
-                        ],
-                        
-                    ),
-                ]
-            )
+        # Меню появляется ПОД аватаркой
+        menu_position=ft.PopupMenuPosition.UNDER,
+        bgcolor=ft.Colors.with_opacity(0.7, ft.Colors.BLUE_GREY_700),
+
+        # Пункты меню
+        items=[
+            ft.PopupMenuItem(icon=ft.Icons.PERSON, text=tr("profile")),
+            ft.PopupMenuItem(icon=ft.Icons.SETTINGS, text=tr("settings")),
+            ft.PopupMenuItem(),  # Divider
+            ft.PopupMenuItem(icon=ft.Icons.EXIT_TO_APP, text=tr("logout"), on_click=close_app),
+        ],
+    )
     # Панель навигации
     navbar = ft.Container(
                 bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
