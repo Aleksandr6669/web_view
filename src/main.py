@@ -348,8 +348,8 @@ def main(page: ft.Page):
                 title,
                 username,
                 password,
-                msg,
                 remember_me,
+                msg,
                 login_btn,
                 register_btn,
                 lang,
@@ -360,8 +360,8 @@ def main(page: ft.Page):
         )
         # Обновляем контейнер с профилем
         container.padding=20
-        container.width = 440
-        container.height = 440
+        container.width = 355
+        container.height = 460
         container.content = forma_content
         
 
