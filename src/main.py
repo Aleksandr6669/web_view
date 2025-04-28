@@ -348,18 +348,19 @@ def main(page: ft.Page):
                 title,
                 username,
                 password,
+                msg,
                 remember_me,
                 login_btn,
                 register_btn,
                 lang,
-                msg,
+                
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
         # Обновляем контейнер с профилем
         container.padding=20
-        container.width = 355
+        container.width = 440
         container.height = 440
         container.content = forma_content
         
