@@ -219,7 +219,7 @@ def main(page: ft.Page):
             border_radius=20,
             text_size=12,
             content_padding=0,
-            width=90,
+            width=100,
 
         )
 
@@ -359,7 +359,7 @@ def main(page: ft.Page):
         )
         # Обновляем контейнер с профилем
         container.padding=20
-        container.width = 350
+        container.width = 355
         container.height = 440
         container.content = forma_content
         
