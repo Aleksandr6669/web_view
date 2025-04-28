@@ -20,11 +20,12 @@ def main(page: ft.Page):
     
 
     languages = {
-        "en": ("EN", "🇬🇧"),
-        "ua": ("UA", "🇺🇦"),
-        "fr": ("FR", "🇫🇷"),
-        "zh": ("ZH", "🇨🇳"),
+        "en": ("English  ", "🇬🇧 "),
+        "ua": ("Українська  ", "🇺🇦 "),
+        "fr": ("Français  ", "🇫🇷 "),
+        "zh": ("中文  ", "🇨🇳 "),
     }
+
 
 
 
@@ -49,18 +50,10 @@ def main(page: ft.Page):
 
         tr = Translator(current_lang)
 
+        lang_popup(page)
         update_ui()
     
     
-
-
-    def update_language(e):
-        global tr
-        current_lang = lang.value
-        page.client_storage.set("current_lang", current_lang)
-        tr = Translator(current_lang)
-        update_ui()
-
 
     def update_ui():
         title.value = tr("welcome")
@@ -195,35 +188,44 @@ def main(page: ft.Page):
     def handle_on_hover(e):
         print(f".on_hover")
 
-    def lang_dropdown(page):
+    def lang_popup(page):
         try:
-            if page.client_storage.get("current_lang") is not None:
-                current_lang = page.client_storage.get("current_lang")
-            else:
-                current_lang = "en"
+            current_lang = page.client_storage.get("current_lang") or "en"
         except:
             current_lang = "en"
 
-        return ft.Dropdown(
+         # Теперь на основе current_lang создаём красивую надпись
+        selected_text = ft.Text(f"{languages.get(current_lang)[1]} {languages.get(current_lang)[0]}", size=14, weight=ft.FontWeight.W_600)
+
+        def handle_lang_select(e):
+            selected_lang = e.control.data
+            page.client_storage.set("current_lang", selected_lang)
+            global tr
+            tr = Translator(selected_lang)
             
-            value=current_lang,
-            options=[
-                ft.dropdown.Option(k, text=f"{flag} {name}")
+            # Обновляем надпись на кнопке
+            selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
+            
+            update_ui()
+            page.update()
+
+        return ft.PopupMenuButton(
+            tooltip="",
+            content=selected_text,
+            menu_position=ft.PopupMenuPosition.UNDER,
+            bgcolor=ft.Colors.BLUE_GREY_900,
+            items=[
+                ft.PopupMenuItem(
+                    text=f"{flag} {name}",
+                    data=k,
+                    on_click=handle_lang_select,
+                )
                 for k, (name, flag) in languages.items()
             ],
-            selected_suffix=ft.Text(languages[current_lang][1]),  # Только флаг в поле выбора
-            on_change=update_language,
-            bgcolor=ft.Colors.BLUE_GREY_900,
-            color=ft.Colors.WHITE,
-            border_width=0,  # Убираем обводку
-            border_radius=20,
-            text_size=12,
-            content_padding=0,
-            width=100,
-
         )
 
-    lang = lang_dropdown(page)
+            
+    lang = lang_popup(page)
     
     title = ft.Text(tr("welcome"), size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
 
@@ -232,6 +234,7 @@ def main(page: ft.Page):
 
     avatar_url = "avatar.png"
     menubar = ft.PopupMenuButton(
+        tooltip="",
         # Содержимое кнопки — тот самый Stack, который ты отправил
         content=ft.Stack(
             [
