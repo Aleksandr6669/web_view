@@ -13,6 +13,10 @@ class Translator:
             "invalid_password": "Пароль должен содержать буквы и цифры и быть не менее 6 символов!",
             "remember_me": "Запомнить меня",
             "menu": "Меню",
+            "menu_title": "📂 Меню",
+            "home": "Главная",
+            "users": "Пользователи",
+            "stats": "Статистика",
             "profile": "Профиль",
             "settings": "Настройки",
             "logout": "Выход"
@@ -30,6 +34,10 @@ class Translator:
             "invalid_password": "Password must contain letters and numbers and be at least 6 characters long!",
             "remember_me": "Remember me",
             "menu": "Menu",
+            "menu_title": "📂 Menu",
+            "home": "Home",
+            "users": "Users",
+            "stats": "Statistics",
             "profile": "Profile",
             "settings": "Settings",
             "logout": "Logout"
@@ -47,6 +55,10 @@ class Translator:
             "invalid_password": "Пароль повинен містити літери та цифри, і бути не менше 6 символів!",
             "remember_me": "Запам'ятати мене",
             "menu": "Меню",
+            "menu_title": "📂 Меню",
+            "home": "Головна",
+            "users": "Користувачі",
+            "stats": "Статистика",
             "profile": "Профіль",
             "settings": "Налаштування",
             "logout": "Вихід"
@@ -64,6 +76,10 @@ class Translator:
             "invalid_password": "Le mot de passe doit contenir des lettres et des chiffres et comporter au moins 6 caractères !",
             "remember_me": "Se souvenir de moi",
             "menu": "Menu",
+            "menu_title": "📂 Menu",
+            "home": "Accueil",
+            "users": "Utilisateurs",
+            "stats": "Statistiques",
             "profile": "Profil",
             "settings": "Paramètres",
             "logout": "Déconnexion"
@@ -81,11 +97,16 @@ class Translator:
             "invalid_password": "密码必须包含字母和数字，并且至少6个字符！",
             "remember_me": "记住我",
             "menu": "菜单",
+            "menu_title": "📂 菜单",
+            "home": "主页",
+            "users": "用户",
+            "stats": "统计",
             "profile": "个人资料",
             "settings": "设置",
             "logout": "退出"
         }
     }
+
 
 
     def __init__(self, lang="en"):
@@ -103,5 +124,5 @@ class Translator:
     def __call__(self, key):
         # Возвращаем перевод для заданного ключа, если такой ключ существует
         translations = self.translations.get(self.lang, self.translations["en"])
-        return translations.get(key, f"Translation for '{key}' not found.")
+        return translations.get(key, f"{key}")
 

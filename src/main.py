@@ -16,6 +16,8 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     # page.bgcolor = ft.Colors.TRANSPARENT
     page.padding = 0
+    password_visible = ft.Ref[bool]()
+    password_field = ft.Ref[ft.TextField]()
 
     
 
@@ -72,6 +74,14 @@ def main(page: ft.Page):
         menubar.items[0].text = tr("profile")    # Профиль
         menubar.items[1].text = tr("settings")   # Настройки
         menubar.items[3].text = tr("logout")     # Выход
+
+        navigation_panel.content.controls[0].value = tr("menu_title")
+
+
+        nav_refs["home"].current.content.controls[1].value = tr("home")
+        nav_refs["users"].current.content.controls[1].value = tr("users")
+        nav_refs["stats"].current.content.controls[1].value = tr("stats")
+        nav_refs["settings"].current.content.controls[1].value = tr("settings")
 
         page.update()
 
@@ -141,7 +151,8 @@ def main(page: ft.Page):
             profile_content = ft.Column(
                 [
                     navbar,
-                    ft.Text("Welcome!", size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+                    main_area
+                    
                 ],
                 alignment=ft.MainAxisAlignment.START,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -213,7 +224,7 @@ def main(page: ft.Page):
             tooltip="",
             content=selected_text,
             menu_position=ft.PopupMenuPosition.UNDER,
-            bgcolor=ft.Colors.TRANSPARENT,
+            bgcolor=ft.Colors.BLUE_GREY,
             items=[
                 ft.PopupMenuItem(
                     text=f"{flag} {name}",
@@ -294,28 +305,255 @@ def main(page: ft.Page):
                 )
             )
 
+
+    users = [
+        {"username": "alice", "email": "alice@example.com"},
+        {"username": "bob", "email": "bob@example.com"},
+        {"username": "charlie", "email": "charlie@example.com"},
+        {"username": "alice", "email": "alice@example.com"},
+        {"username": "bob", "email": "bob@example.com"},
+        {"username": "charlie", "email": "charlie@example.com"},
+        {"username": "alice", "email": "alice@example.com"},
+        {"username": "bob", "email": "bob@example.com"},
+        {"username": "charlie", "email": "charlie@example.com"},
+    ]
+
+    user_cards = [
+        ft.Container(
+            bgcolor=ft.Colors.BLUE_GREY_100,
+            border_radius=12,
+            padding=15,
+            margin=10,
+            animate_opacity=300,
+            opacity=1.0,
+            content=ft.Row([
+                ft.CircleAvatar(foreground_image_src=avatar_url),
+                ft.Text(f"👤 {user['username']}", size=16, weight=ft.FontWeight.BOLD),
+                ft.Text(f"📧 {user['email']}", size=14, color=ft.Colors.BLUE_GREY_700),
+            ])
+        )
+        for user in users
+    ]
+
+    active_view = ft.Ref[str]()     # создаём ссылку
+    active_view.current = "home"    # и только потом кладём значение
+
+
+    home_view = ft.Container(
+        expand=True,
+        padding=15,
+        border_radius=10,
+        height=page.height - 150,
+        width=page.width*3.2,
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
+        content=ft.Text("🏠 Добро пожаловать на главную!", size=24),
+        visible=True,
+        opacity=1.0,
+        animate_opacity=200
+    )
+
+    users_view = ft.Container(
+        expand=True,
+        padding=15,
+        border_radius=10,
+        height=page.height - 150,
+        width=page.width*3.2,
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
+        content=ft.Column(
+            controls=[
+                ft.Text("Зарегистрированные пользователи:", size=20, color=ft.Colors.WHITE),
+
+                ft.Container(
+                    expand=True,
+                    content=ft.Column(
+                        expand=True,
+                        scroll=ft.ScrollMode.AUTO,
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        controls=user_cards,
+                    )
+                )
+            ],
+            spacing=15,
+            alignment=ft.MainAxisAlignment.START,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        visible=False,
+        opacity=0.0,
+        animate_opacity=200
+    )
+
+
+    stats_view = ft.Container(
+        expand=True,
+        padding=15,
+        border_radius=10,
+        height=page.height - 150,
+        width=page.width*3.2,
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
+        content=ft.Text("📊 Аналитика и статистика", size=24),
+        visible=False,
+        opacity=0.0,
+        animate_opacity=200
+    )
+
+    settings_view = ft.Container(
+        expand=True,
+        padding=15,
+        border_radius=10,
+        height=page.height - 150,
+        width=page.width*3.2,
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
+        content=ft.Text("⚙️ Настройки приложения", size=24),
+        visible=False,
+        opacity=0.0,
+        animate_opacity=200
+    )
+
+    views = {
+        "home": home_view,
+        "users": users_view,
+        "stats": stats_view,
+        "settings": settings_view
+    }
+
+    nav_refs = {
+        "home": ft.Ref[ft.Container](),
+        "users": ft.Ref[ft.Container](),
+        "stats": ft.Ref[ft.Container](),
+        "settings": ft.Ref[ft.Container]()
+    }
+
+    def switch_view(view_key):
+        active_view.current = view_key
+        for key, view in views.items():
+            if key == view_key:
+                view.visible = True
+                view.opacity = 1.0
+            else:
+                view.opacity = 0.0
+            view.update()
+
+        for key, ref in nav_refs.items():
+            if ref.current:
+                ref.current.bgcolor = ft.Colors.BLUE_GREY_100 if key == view_key else None
+                ref.current.update()
+
+    def nav_item(key, icon, label):
+        return ft.Container(
+            ref=nav_refs[key],
+            padding=ft.padding.symmetric(vertical=10, horizontal=10),
+            border_radius=8,
+            bgcolor=ft.Colors.BLUE_GREY_100 if key == "home" else None,
+            content=ft.Row(
+                controls=[
+                    ft.Icon(icon, size=20, color=ft.Colors.BLUE_GREY_700),
+                    ft.Text(label, color=ft.Colors.BLUE_GREY_800, size=14)
+                ],
+                spacing=10
+            ),
+            on_click=lambda e: switch_view(key),
+            ink=True
+        )
+    
+    navigation_panel = ft.Container(
+        width=240,
+        padding=15,
+        bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
+        border_radius=15,
+        content = ft.Column(
+            controls=[
+                ft.Text(tr("menu_title"), size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_900),
+                ft.Divider(thickness=1, color=ft.Colors.BLUE_GREY_100),
+                nav_item("home", ft.icons.HOME_ROUNDED, tr("home")),
+                nav_item("users", ft.icons.PEOPLE_ALT_OUTLINED, tr("users")),
+                nav_item("stats", ft.icons.BAR_CHART, tr("stats")),
+                nav_item("settings", ft.icons.SETTINGS, tr("settings")),
+            ],
+            spacing=8
+        )
+
+    )
+
+    main_area = ft.Container(
+        blur=20,
+        # width=2400,
+        
+        padding=20,
+        content=ft.Row(
+            controls=[
+                navigation_panel,
+                ft.Container(
+                    expand=True,
+                    content=ft.Column(
+                        expand=True,
+                        controls=[
+                            ft.Stack(
+                                expand=True,
+                                controls=[
+                                    home_view,
+                                    users_view,
+                                    stats_view,
+                                    settings_view
+                                ]
+                            )
+                        ]
+                    )
+                )
+            ],
+            spacing=30,
+            vertical_alignment=ft.CrossAxisAlignment.START
+        )
+    )
+
+
             
     username = ft.TextField(
         label=tr("username"),
         width=300,
+        height=50,
         border_radius=20,
         bgcolor=ft.Colors.WHITE10,
         border_color=ft.Colors.BLUE_500,
         focused_border_color=ft.Colors.CYAN_400,
-        text_style=ft.TextStyle(color=ft.Colors.WHITE, size=14),
+        text_style=ft.TextStyle(color=ft.Colors.WHITE, size=16),
         on_change=lambda e: validate_email(username.value)
     )
     username.auto_focus = True
 
+    def toggle_visibility(e):
+        password_visible.current = not password_visible.current
+        password_field.current.password = not password_visible.current
+        password_field.current.suffix = ft.IconButton(
+            icon=ft.icons.VISIBILITY_OFF if password_visible.current else ft.icons.VISIBILITY,
+            on_click=toggle_visibility,
+            icon_color=ft.Colors.BLUE_300,
+        )
+        password_field.current.update()
+
     password = ft.TextField(
         label=tr("password"),
         password=True,
+        # suffix=ft.Container(
+        #     content=ft.IconButton(
+        #         icon=ft.icons.VISIBILITY,
+        #         on_click=toggle_visibility,
+        #         icon_color=ft.Colors.BLUE_300,
+        #         icon_size=20,
+        #         style=ft.ButtonStyle(padding=2),
+        #     ),
+        #     width=20,
+        #     height=20,
+        #     alignment=ft.alignment.center,
+        # ),
         width=300,
+        height=50,
+        text_style=ft.TextStyle(color=ft.Colors.WHITE, size=14),
+        text_vertical_align=ft.VerticalAlignment.CENTER,
         border_radius=20,
         bgcolor=ft.Colors.WHITE10,
         border_color=ft.Colors.BLUE_500,
         focused_border_color=ft.Colors.CYAN_400,
-        text_style=ft.TextStyle(color=ft.Colors.WHITE, size=14),
         on_change=lambda e: validate_password(password.value)
     )
 
