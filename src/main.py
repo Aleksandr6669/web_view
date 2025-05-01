@@ -13,7 +13,7 @@ def main(page: ft.Page):
     page.title = "Авторизация"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    # page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.DARK
     # page.bgcolor = ft.Colors.TRANSPARENT
     page.padding = 0
 
@@ -213,7 +213,7 @@ def main(page: ft.Page):
             tooltip="",
             content=selected_text,
             menu_position=ft.PopupMenuPosition.UNDER,
-            bgcolor=ft.Colors.BLUE_GREY_900,
+            bgcolor=ft.Colors.TRANSPARENT,
             items=[
                 ft.PopupMenuItem(
                     text=f"{flag} {name}",
