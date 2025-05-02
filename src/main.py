@@ -463,7 +463,7 @@ def main(page: ft.Page):
         border_radius=15,
         content = ft.Column(
             controls=[
-                ft.Text(tr("menu_title"), size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_GREY_900),
+                ft.Text(tr("menu_title"), size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.LIGHT_BLUE_900),
                 ft.Divider(thickness=1, color=ft.Colors.BLUE_GREY_100),
                 nav_item("home", ft.icons.HOME_ROUNDED, tr("home")),
                 nav_item("users", ft.icons.PEOPLE_ALT_OUTLINED, tr("users")),
