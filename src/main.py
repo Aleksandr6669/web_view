@@ -6,10 +6,10 @@ from translations import Translator
 API_URL = "https://alexsandr7779.pythonanywhere.com"  # Укажи здесь свой API, если он на другом сервере
 
 
-current_lang = "en"
-tr = Translator(current_lang)
+
 
 def main(page: ft.Page):
+    tr = Translator(page)
     page.title = tr("welcome")
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -32,25 +32,17 @@ def main(page: ft.Page):
 
 
     def start_login():
-        global tr
         try:
             if page.client_storage.get("access_token") is not None and page.client_storage.get("remember_me") == True:
                 page.on_login()  # Вызываем событие на успешный вход
+            elif page.client_storage.get("access_token") is not None and page.client_storage.get("is_login_screen") is not None:
+                page.on_login()
             else:
                 page.on_logout(None)
-                # page.on_logout()  # Вызываем событие на 
         except:
             page.on_logout(None)
-        try:
-            if page.client_storage.get("current_lang") is not None:
-                current_lang = page.client_storage.get("current_lang")
-            else:
-                current_lang = "en"
-                page.client_storage.set("current_lang", current_lang)
-        except:
-            current_lang = "en"
 
-        tr = Translator(current_lang)
+        tr = Translator(page)
 
         lang_popup(page)
         update_ui()
@@ -121,11 +113,11 @@ def main(page: ft.Page):
             show_message(response.json().get("message", "Error"))
 
     def handle_login(e):
-        global is_login_screen
         email = username.value
         password_value = password.value
         page.client_storage.set("remember_me", remember_me.value)
         page.client_storage.set("saved_username", username.value)
+        
 
         if not is_valid_email(email):
             show_message(tr("invalid_email"))
@@ -141,7 +133,7 @@ def main(page: ft.Page):
             show_message(tr("welcome") + f", {email}!", ft.Colors.LIGHT_GREEN_400)
             page.client_storage.set("access_token", access_token)
             # show_profile()
-            is_login_screen = False
+            page.on_keyboard_event = None
             page.on_login()  # Вызываем событие на успешный вход
         else:
             show_message(response.json().get("message", "Error"))
@@ -159,7 +151,7 @@ def main(page: ft.Page):
                 [
                     navbar,
                     main_area
-                    
+
                 ],
                 alignment=ft.MainAxisAlignment.START,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -218,8 +210,7 @@ def main(page: ft.Page):
         def handle_lang_select(e):
             selected_lang = e.control.data
             page.client_storage.set("current_lang", selected_lang)
-            global tr
-            tr = Translator(selected_lang)
+            tr = Translator(page)
             
             # Обновляем надпись на кнопке
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
@@ -606,8 +597,7 @@ def main(page: ft.Page):
     
 
     def show_login_screen(e):
-        global is_login_screen
-        is_login_screen = True
+        page.on_keyboard_event = handle_key
         username.value = page.client_storage.get("saved_username")
         forma_content = ft.Column(
             [
@@ -674,23 +664,27 @@ def main(page: ft.Page):
         )
     
     def reset_ui():
+        page.client_storage.set("is_login_screen", True)
         page.clean()
         main(page)
-        page.on_login()
+        page.client_storage.remove("is_login_screen")
+
+        
+        # page.on_login()
 
         # container.content.controls.clear()
         # container.content.update()
         # show_profile()
 
     def handle_key(e: ft.KeyboardEvent):
-        if e.key == "Enter" and is_login_screen:
+        if e.key == "Enter":
             handle_login(e)
 
 
 
     page.add(body)
     
-    page.on_keyboard_event = handle_key
+    
     page.on_logout = show_login_screen
     page.on_login = show_profile
     

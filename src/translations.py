@@ -117,30 +117,14 @@ class Translator:
 
 
 
-    def __init__(self, lang="en"):
+    def __init__(self, page):
         # Инициализация с выбранным языком, по умолчанию используется английский
-        self.lang = lang
-
-    def set_language(self, lang):
-        # Изменяем язык
-        if lang in self.translations:
-            self.lang = lang
-        else:
-            print(f"Language '{lang}' not found, defaulting to 'en'.")
-            self.lang = "en"
+        self.page = page
 
     def __call__(self, key):
-        # 1. Пробуем найти перевод в выбранном языке
-        lang_translations = self.translations.get(self.lang, {})
-        if key in lang_translations:
-            return lang_translations[key]
-
-        # 2. Пробуем найти на английском
-        en_translations = self.translations.get("en", {})
-        if key in en_translations:
-            return en_translations[key]
-
-        # 3. Ничего не найдено — вернуть сам ключ
-        return key
+        lang = self.page.client_storage.get("current_lang") or "en"
+        return self.translations.get(lang, {}).get(
+            key, self.translations.get("en", {}).get(key, key)
+        )
 
 
