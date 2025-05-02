@@ -58,6 +58,8 @@ def main(page: ft.Page):
     
 
     def update_ui():
+        page.title = tr("welcome")
+        
         title.value = tr("welcome")
         username.label = tr("username")
         password.label = tr("password")
