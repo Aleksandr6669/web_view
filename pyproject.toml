@@ -21,7 +21,7 @@ org = "com.mycompany"
 product = "web_view"
 
 # company name to display in about app dialogs
-company = "Flet"
+company = "Loki"
 
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2025 by Flet"
