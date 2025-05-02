@@ -1,7 +1,7 @@
 [project]
-name = "web_view"
-version = "0.1.1"
-description = "Loki"
+name = "loki"
+version = "0.1.0"
+description = "Loki is a lightweight desktop app built with Flet, designed for fast interaction, dynamic interfaces, and seamless local data handling."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
@@ -11,17 +11,10 @@ dependencies = [
   "flet==0.27.0"
 ]
 
-[tool.flet]
-# org name in reverse domain name notation, e.g. "com.mycompany".
-# Combined with project.name to build bundle ID for iOS and Android apps
-org = "com.mycompany"
-
-# project display name that is used as an app title on Android and iOS home screens,
-# shown in window titles and about app dialogs on desktop.
+[tool.flet][tool.flet]
 product = "Loki"
-
-# company name to display in about app dialogs
-company = "Loki"
+company = "Loki Technologies"
+org = "com.loki.app"
 
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2025 by Flet"
