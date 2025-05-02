@@ -83,6 +83,9 @@ def main(page: ft.Page):
         nav_refs["stats"].current.content.controls[1].value = tr("stats")
         nav_refs["settings"].current.content.controls[1].value = tr("settings")
 
+        refresh_button.text = tr("refresh")
+        refresh_button.tooltip = tr("refresh_tooltip")
+
         page.update()
 
     def show_message(text, color=ft.Colors.ERROR):
@@ -271,6 +274,21 @@ def main(page: ft.Page):
             ft.PopupMenuItem(icon=ft.Icons.EXIT_TO_APP, text=tr("logout"), on_click=close_app),
         ],
     )
+
+    refresh_button = ft.ElevatedButton(
+        text=tr("refresh"),
+        tooltip=tr("refresh_tooltip"),
+        icon=ft.icons.REFRESH,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=12),
+            bgcolor=ft.colors.BLUE_500,
+            color=ft.colors.WHITE,
+            overlay_color=ft.colors.BLUE_100,
+            padding=ft.padding.symmetric(horizontal=20, vertical=12),
+            elevation=3,
+        ),
+        on_click=lambda e: reset_ui()
+    )
     # Панель навигации
     navbar = ft.Container(
                 bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
@@ -286,6 +304,7 @@ def main(page: ft.Page):
                             content=ft.Row(
                                 height=40,
                                 controls=[
+                                refresh_button,
                                 lang,
                                 menubar,
                                 ft.Container(
@@ -368,7 +387,7 @@ def main(page: ft.Page):
                     content=ft.Column(
                         expand=True,
                         scroll=ft.ScrollMode.AUTO,
-                        spacing=20,
+                        spacing=10,
                         alignment=ft.MainAxisAlignment.CENTER,
                         controls=user_cards,
                     )
@@ -457,7 +476,7 @@ def main(page: ft.Page):
         )
     
     navigation_panel = ft.Container(
-        width=240,
+        width=200,
         padding=15,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
         border_radius=15,
@@ -648,10 +667,24 @@ def main(page: ft.Page):
             
         )
     
+    def reset_ui():
+        page.clean()
+        main(page)
+        page.on_login()
+
+        # container.content.controls.clear()
+        # container.content.update()
+        # show_profile()
+
+    def handle_key(e: ft.KeyboardEvent):
+        if e.key == "Enter":
+            handle_login(e)
+
+
 
     page.add(body)
     
-    # show_profile()
+    page.on_keyboard_event = handle_key
     page.on_logout = show_login_screen
     page.on_login = show_profile
     

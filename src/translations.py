@@ -40,7 +40,9 @@ class Translator:
             "stats": "Statistics",
             "profile": "Profile",
             "settings": "Settings",
-            "logout": "Logout"
+            "logout": "Logout",
+            "refresh": "Refresh",
+            "refresh_tooltip": "Restart interface if it glitches 🛠️"
         },
         "ua": {
             "welcome": "Ласкаво просимо в Потік!",
@@ -61,7 +63,9 @@ class Translator:
             "stats": "Статистика",
             "profile": "Профіль",
             "settings": "Налаштування",
-            "logout": "Вихід"
+            "logout": "Вихід",
+            "refresh": "Оновити",
+            "refresh_tooltip": "Перезапустити інтерфейс, якщо щось зависло 🛠️"
         },
         "fr": {
             "welcome": "Bienvenue dans Flux!",
@@ -82,7 +86,9 @@ class Translator:
             "stats": "Statistiques",
             "profile": "Profil",
             "settings": "Paramètres",
-            "logout": "Déconnexion"
+            "logout": "Déconnexion",
+            "refresh": "Rafraîchir",
+            "refresh_tooltip": "Redémarrer l’interface en cas de bug 🛠️"
         },
         "zh": {
             "welcome": "欢迎来到流!",
@@ -103,7 +109,9 @@ class Translator:
             "stats": "统计",
             "profile": "个人资料",
             "settings": "设置",
-            "logout": "退出"
+            "logout": "退出",
+            "refresh": "刷新",
+            "refresh_tooltip": "界面卡住时重新加载 🛠️"
         }
     }
 
@@ -122,7 +130,17 @@ class Translator:
             self.lang = "en"
 
     def __call__(self, key):
-        # Возвращаем перевод для заданного ключа, если такой ключ существует
-        translations = self.translations.get(self.lang, self.translations["en"])
-        return translations.get(key, f"{key}")
+        # 1. Пробуем найти перевод в выбранном языке
+        lang_translations = self.translations.get(self.lang, {})
+        if key in lang_translations:
+            return lang_translations[key]
+
+        # 2. Пробуем найти на английском
+        en_translations = self.translations.get("en", {})
+        if key in en_translations:
+            return en_translations[key]
+
+        # 3. Ничего не найдено — вернуть сам ключ
+        return key
+
 
