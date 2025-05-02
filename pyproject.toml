@@ -1,7 +1,7 @@
 [project]
-name = "loki"
+name = "Stream"
 version = "0.1.0"
-description = "Loki is a lightweight desktop app built with Flet, designed for fast interaction, dynamic interfaces, and seamless local data handling."
+description = "A lightweight tool for interactive data collection."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
@@ -11,10 +11,10 @@ dependencies = [
   "flet==0.27.0"
 ]
 
-[tool.flet][tool.flet]
-product = "Loki"
+[tool.flet]
+product = "Stream"
 company = "Loki Technologies"
-org = "com.loki.app"
+org = "com.streamloki.app"
 
 # copyright text to display in about app dialogs
 copyright = "Copyright (C) 2025 by Flet"
