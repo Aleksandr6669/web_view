@@ -10,7 +10,7 @@ current_lang = "en"
 tr = Translator(current_lang)
 
 def main(page: ft.Page):
-    page.title = "Авторизация"
+    page.title = tr("welcome")
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.theme_mode = ft.ThemeMode.DARK
@@ -119,6 +119,7 @@ def main(page: ft.Page):
             show_message(response.json().get("message", "Error"))
 
     def handle_login(e):
+        global is_login_screen
         email = username.value
         password_value = password.value
         page.client_storage.set("remember_me", remember_me.value)
@@ -138,6 +139,7 @@ def main(page: ft.Page):
             show_message(tr("welcome") + f", {email}!", ft.Colors.LIGHT_GREEN_400)
             page.client_storage.set("access_token", access_token)
             # show_profile()
+            is_login_screen = False
             page.on_login()  # Вызываем событие на успешный вход
         else:
             show_message(response.json().get("message", "Error"))
@@ -602,6 +604,8 @@ def main(page: ft.Page):
     
 
     def show_login_screen(e):
+        global is_login_screen
+        is_login_screen = True
         username.value = page.client_storage.get("saved_username")
         forma_content = ft.Column(
             [
@@ -677,7 +681,7 @@ def main(page: ft.Page):
         # show_profile()
 
     def handle_key(e: ft.KeyboardEvent):
-        if e.key == "Enter":
+        if e.key == "Enter" and is_login_screen:
             handle_login(e)
 
 
