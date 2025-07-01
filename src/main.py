@@ -279,7 +279,7 @@ def main(page: ft.Page):
             [
                 ft.CircleAvatar(foreground_image_src=avatar_url),
                 ft.Container(
-                    content=ft.CircleAvatar(bgcolor=ft.colors.GREEN, radius=5),
+                    content=ft.CircleAvatar(bgcolor=ft.Colors.GREEN, radius=5),
                     alignment=ft.alignment.bottom_left,
                 ),
             ],
@@ -303,12 +303,12 @@ def main(page: ft.Page):
     refresh_button = ft.ElevatedButton(
         text=tr("refresh"),
         tooltip=tr("refresh_tooltip"),
-        icon=ft.icons.REFRESH,
+        icon=ft.Icons.REFRESH,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=12),
-            bgcolor=ft.colors.BLUE_500,
-            color=ft.colors.WHITE,
-            overlay_color=ft.colors.BLUE_100,
+            bgcolor=ft.Colors.BLUE_500,
+            color=ft.Colors.WHITE,
+            overlay_color=ft.Colors.BLUE_100,
             padding=ft.padding.symmetric(horizontal=20, vertical=12),
             elevation=3,
         ),
@@ -544,10 +544,10 @@ def main(page: ft.Page):
             controls=[
                 ft.Text(tr("menu_title"), size=18, weight=ft.FontWeight.BOLD, color=ft.Colors.LIGHT_BLUE_900),
                 ft.Divider(thickness=1, color=ft.Colors.BLUE_GREY_100),
-                nav_item("home", ft.icons.HOME_ROUNDED, tr("home")),
-                nav_item("users", ft.icons.PEOPLE_ALT_OUTLINED, tr("users")),
-                nav_item("stats", ft.icons.BAR_CHART, tr("stats")),
-                nav_item("settings", ft.icons.SETTINGS, tr("settings")),
+                nav_item("home", ft.Icons.HOME_ROUNDED, tr("home")),
+                nav_item("users", ft.Icons.PEOPLE_ALT_OUTLINED, tr("users")),
+                nav_item("stats", ft.Icons.BAR_CHART, tr("stats")),
+                nav_item("settings", ft.Icons.SETTINGS, tr("settings")),
             ],
             spacing=8
         )
@@ -604,7 +604,7 @@ def main(page: ft.Page):
         password_visible.current = not password_visible.current
         password_field.current.password = not password_visible.current
         password_field.current.suffix = ft.IconButton(
-            icon=ft.icons.VISIBILITY_OFF if password_visible.current else ft.icons.VISIBILITY,
+            icon=ft.Icons.VISIBILITY_OFF if password_visible.current else ft.Icons.VISIBILITY,
             on_click=toggle_visibility,
             icon_color=ft.Colors.BLUE_300,
         )
@@ -615,7 +615,7 @@ def main(page: ft.Page):
         password=True,
         # suffix=ft.Container(
         #     content=ft.IconButton(
-        #         icon=ft.icons.VISIBILITY,
+        #         icon=ft.Icons.VISIBILITY,
         #         on_click=toggle_visibility,
         #         icon_color=ft.Colors.BLUE_300,
         #         icon_size=20,
