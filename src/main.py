@@ -3,6 +3,7 @@ import re
 import requests
 from translations import Translator
 import os
+import threading
 
 API_URL = "https://alexsandr7779.pythonanywhere.com"  # Укажи здесь свой API, если он на другом сервере
 
@@ -68,12 +69,7 @@ def main(page: ft.Page):
             remember_me.update()
         except:
             pass
-        
-        
-        
-        
-        
-        
+    
         # # Обновляем элементы в menubar
         # menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
         # menubar.controls[0].controls[0].content = ft.Text(tr("profile"))  # Профиль
@@ -109,6 +105,8 @@ def main(page: ft.Page):
 
         except:
             pass
+    
+    
 
     def show_message(text, color=ft.Colors.ERROR):
         msg.value = text
@@ -241,9 +239,14 @@ def main(page: ft.Page):
             
             # Обновляем надпись на кнопке
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
-            
-            update_ui()
+
+            # Create threads for parallel execution
+            update_ui_thread = threading.Thread(target=update_ui)
+            # selected_text_update_thread = threading.Thread(target=selected_text.update)
+            update_ui_thread.start()
+            # selected_text_update_thread.start()
             selected_text.update()
+            
 
         return ft.PopupMenuButton(
             tooltip="",
@@ -351,9 +354,19 @@ def main(page: ft.Page):
         {"username": "alice", "email": "alice@example.com"},
         {"username": "bob", "email": "bob@example.com"},
         {"username": "charlie", "email": "charlie@example.com"},
+        {"username": "alice", "email": "alice@example.com"},
+        {"username": "bob", "email": "bob@example.com"},
+        {"username": "charlie", "email": "charlie@example.com"},
+        {"username": "alice", "email": "alice@example.com"},
+        {"username": "bob", "email": "bob@example.com"},
+        {"username": "charlie", "email": "charlie@example.com"},
+        {"username": "alice", "email": "alice@example.com"},
+        {"username": "bob", "email": "bob@example.com"},
+        {"username": "charlie", "email": "charlie@example.com"},
     ]
 
-    user_cards = [
+    def user_cards():
+        return [
         ft.Container(
             bgcolor=ft.Colors.BLUE_GREY_100,
             border_radius=12,
@@ -362,13 +375,16 @@ def main(page: ft.Page):
             animate_opacity=300,
             opacity=1.0,
             content=ft.Row([
+                # Убедитесь, что avatar_url доступен в этом контексте, или получите его для каждого пользователя, если он уникален
                 ft.CircleAvatar(foreground_image_src=avatar_url),
                 ft.Text(f"👤 {user['username']}", size=16, weight=ft.FontWeight.BOLD),
                 ft.Text(f"📧 {user['email']}", size=14, color=ft.Colors.BLUE_GREY_700),
             ])
         )
-        for user in users
+        for user in users # <-- Цикл теперь внутри генератора списка
     ]
+
+    
 
     active_view = ft.Ref[str]()     # создаём ссылку
     active_view.current = "home"    # и только потом кладём значение
@@ -381,9 +397,16 @@ def main(page: ft.Page):
         height=page.height - 150,
         width=page.width*3.2,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
-        content=ft.Text("🏠 Добро пожаловать на главную!", size=24),
-        visible=True,
-        opacity=1.0,
+        content=ft.Column( # Добавьте Column здесь
+                expand=True,
+                scroll=ft.ScrollMode.AUTO, # Добавьте режим прокрутки
+                controls=[
+                    ft.Text("🏠 Добро пожаловать на главную!", size=24),
+                ]
+            ),
+        # visible=True,
+        # opacity=1.0,
+        animate=ft.Animation(duration=150, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -391,30 +414,29 @@ def main(page: ft.Page):
         expand=True,
         padding=15,
         border_radius=10,
-        height=page.height - 150,
-        width=page.width*3.2,
+        height=0,
+        width=0,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
         content=ft.Column(
+            
             controls=[
                 ft.Text("Зарегистрированные пользователи:", size=20, color=ft.Colors.WHITE),
 
-                ft.Container(
-                    expand=True,
-                    content=ft.Column(
+                ft.ListView(
                         expand=True,
-                        scroll=ft.ScrollMode.AUTO,
+                        # scroll=ft.ScrollMode.AUTO,
                         spacing=10,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        controls=user_cards,
+                        # alignment=ft.MainAxisAlignment.CENTER,
+                        controls=user_cards(),
                     )
-                )
             ],
             spacing=15,
             alignment=ft.MainAxisAlignment.START,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
-        visible=False,
-        opacity=0.0,
+        # visible=False,
+        # opacity=0.0,
+        animate=ft.Animation(duration=150, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -423,12 +445,20 @@ def main(page: ft.Page):
         expand=True,
         padding=15,
         border_radius=10,
-        height=page.height - 150,
-        width=page.width*3.2,
+        height=0,
+        width=0,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
-        content=ft.Text("📊 Аналитика и статистика", size=24),
-        visible=False,
-        opacity=0.0,
+        content=ft.Column( # Добавьте Column здесь
+                expand=True,
+                scroll=ft.ScrollMode.AUTO, # Добавьте режим прокрутки
+                controls=[
+                    ft.Text("📊 Аналитика и статистика", size=24),
+                    # Добавьте другое содержимое здесь
+                ]
+            ),
+        # visible=False,
+        # opacity=0.0,
+        animate=ft.Animation(duration=150, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -436,12 +466,20 @@ def main(page: ft.Page):
         expand=True,
         padding=15,
         border_radius=10,
-        height=page.height - 150,
-        width=page.width*3.2,
+        height=0,
+        width=0,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
-        content=ft.Text("⚙️ Настройки приложения", size=24),
-        visible=False,
-        opacity=0.0,
+        content=ft.Column( # Добавьте Column здесь
+                expand=True,
+                scroll=ft.ScrollMode.AUTO, # Добавьте режим прокрутки
+                controls=[
+                    ft.Text("⚙️ Настройки приложения", size=24),
+                    # Добавьте другое содержимое здесь
+                ]
+            ),
+        # visible=False,
+        # opacity=0.0,
+        animate=ft.Animation(duration=150, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -463,16 +501,22 @@ def main(page: ft.Page):
         active_view.current = view_key
         for key, view in views.items():
             if key == view_key:
-                view.visible = True
-                view.opacity = 1.0
+                # view.visible = True
+                # view.opacity = 1.0
+                view.height=page.height-150
+                view.width=page.width*3.2
             else:
-                view.opacity = 0.0
+                view.height=0
+                view.width=0
+                # view.visible = False
+                # view.opacity = 0.0
             view.update()
 
         for key, ref in nav_refs.items():
             if ref.current:
                 ref.current.bgcolor = ft.Colors.BLUE_GREY_100 if key == view_key else None
                 ref.current.update()
+        
 
     def nav_item(key, icon, label):
         return ft.Container(
@@ -524,7 +568,7 @@ def main(page: ft.Page):
                         expand=True,
                         controls=[
                             ft.Stack(
-                                expand=True,
+                                # expand=True,
                                 controls=[
                                     home_view,
                                     users_view,
