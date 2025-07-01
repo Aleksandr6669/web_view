@@ -3,7 +3,7 @@ import re
 import requests
 from translations import Translator
 import os
-import threading
+import threading 
 
 API_URL = "https://alexsandr7779.pythonanywhere.com"  # Укажи здесь свой API, если он на другом сервере
 
