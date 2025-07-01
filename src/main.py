@@ -2,6 +2,7 @@ import flet as ft
 import re
 import requests
 from translations import Translator
+import os
 
 API_URL = "https://alexsandr7779.pythonanywhere.com"  # Укажи здесь свой API, если он на другом сервере
 
@@ -45,7 +46,7 @@ def main(page: ft.Page):
         tr = Translator(page)
 
         lang_popup(page)
-        update_ui()
+        # update_ui()
     
     
 
@@ -57,8 +58,22 @@ def main(page: ft.Page):
         password.label = tr("password")
         login_btn.text = tr("login")
         register_btn.text = tr("register")
-        register_btn.text = tr("register")
         remember_me.label = tr("remember_me")
+        try:
+            title.update()
+            username.update()
+            password.update()
+            login_btn.update()
+            register_btn.update()
+            remember_me.update()
+        except:
+            pass
+        
+        
+        
+        
+        
+        
         # # Обновляем элементы в menubar
         # menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
         # menubar.controls[0].controls[0].content = ft.Text(tr("profile"))  # Профиль
@@ -80,12 +95,25 @@ def main(page: ft.Page):
         refresh_button.text = tr("refresh")
         refresh_button.tooltip = tr("refresh_tooltip")
 
-        page.update()
+        try:
+            menubar.items[0].update()
+            menubar.items[1].update()
+            menubar.items[3].update()
+            navigation_panel.content.controls[0].update()
+            nav_refs["home"].current.content.controls[1].update()
+            nav_refs["home"].current.content.controls[1].update()
+            nav_refs["users"].current.content.controls[1].update()
+            nav_refs["stats"].current.content.controls[1].update()
+            nav_refs["settings"].current.content.controls[1].update()
+            refresh_button.update()
+
+        except:
+            pass
 
     def show_message(text, color=ft.Colors.ERROR):
         msg.value = text
         msg.color = color
-        page.update()
+        msg.update()
 
     def is_valid_email(email):
         return re.match(r"[^@]+@[^@]+\.[^@]+", email)
@@ -167,7 +195,7 @@ def main(page: ft.Page):
 
             page.on_logout(None)
 
-        page.update()
+        container.update()
         
     def validate_email(value):
         if not value:  # Если поле пустое
@@ -193,7 +221,6 @@ def main(page: ft.Page):
 
     def handle_color_click(e):
         print(f".on_click")
-        page.update()
 
     def handle_on_hover(e):
         print(f".on_hover")
@@ -216,7 +243,7 @@ def main(page: ft.Page):
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
             
             update_ui()
-            page.update()
+            selected_text.update()
 
         return ft.PopupMenuButton(
             tooltip="",
@@ -321,12 +348,6 @@ def main(page: ft.Page):
 
 
     users = [
-        {"username": "alice", "email": "alice@example.com"},
-        {"username": "bob", "email": "bob@example.com"},
-        {"username": "charlie", "email": "charlie@example.com"},
-        {"username": "alice", "email": "alice@example.com"},
-        {"username": "bob", "email": "bob@example.com"},
-        {"username": "charlie", "email": "charlie@example.com"},
         {"username": "alice", "email": "alice@example.com"},
         {"username": "bob", "email": "bob@example.com"},
         {"username": "charlie", "email": "charlie@example.com"},
@@ -621,7 +642,7 @@ def main(page: ft.Page):
         container.content = forma_content
         
 
-        page.update()
+        container.update()
 
 
 
@@ -691,6 +712,18 @@ def main(page: ft.Page):
     start_login()
     
     
-   
-# ft.app(target=main)
-ft.app(target=main, port=8080, view=ft.WEB_BROWSER, assets_dir="assets")
+if __name__ == "__main__":
+    """
+    Точка входа в приложение.
+    Запускает приложение с указанной директорией ассетов.
+    """
+    # ft.app(main, assets_dir="assets")
+    port = int(os.environ.get("PORT", 8080)) # Получаем порт из переменной окружения
+
+    # Альтернативный запуск в веб-браузере:
+    ft.app(main,
+        assets_dir="assets", 
+        view=ft.AppView.WEB_BROWSER, 
+        port=port
+        # port=9002
+     )
