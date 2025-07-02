@@ -242,9 +242,9 @@ def main(page: ft.Page):
 
             # Create threads for parallel execution
             update_ui_thread = threading.Thread(target=update_ui)
-            # selected_text_update_thread = threading.Thread(target=selected_text.update)
+            selected_text_update_thread = threading.Thread(target=selected_text.update)
             update_ui_thread.start()
-            # selected_text_update_thread.start()
+            selected_text_update_thread.start()
             selected_text.update()
             
 
