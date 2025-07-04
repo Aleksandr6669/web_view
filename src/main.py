@@ -20,6 +20,7 @@ def main(page: ft.Page):
     page.padding = 0
     password_visible = ft.Ref[bool]()
     password_field = ft.Ref[ft.TextField]()
+   
 
     
 
@@ -76,36 +77,37 @@ def main(page: ft.Page):
         # menubar.controls[0].controls[1].content = ft.Text(tr("settings"))  # Настройки
         # menubar.controls[0].controls[2].content = ft.Text(tr("logout"))  # Выход
 
-        menubar.items[0].text = tr("profile")    # Профиль
-        menubar.items[1].text = tr("settings")   # Настройки
-        menubar.items[3].text = tr("logout")     # Выход
+        # menubar.items[0].text = tr("profile")    # Профиль
+        # menubar.items[1].text = tr("settings")   # Настройки
+        # menubar.items[3].text = tr("logout")     # Выход
 
-        navigation_panel.content.controls[0].value = tr("menu_title")
+        # navigation_panel.content.controls[0].value = tr("menu_title")
 
 
-        nav_refs["home"].current.content.controls[1].value = tr("home")
-        nav_refs["users"].current.content.controls[1].value = tr("users")
-        nav_refs["stats"].current.content.controls[1].value = tr("stats")
-        nav_refs["settings"].current.content.controls[1].value = tr("settings")
+        # nav_refs["home"].current.content.controls[1].value = tr("home")
+        # nav_refs["users"].current.content.controls[1].value = tr("users")
+        # nav_refs["stats"].current.content.controls[1].value = tr("stats")
+        # nav_refs["settings"].current.content.controls[1].value = tr("settings")
 
-        refresh_button.text = tr("refresh")
-        refresh_button.tooltip = tr("refresh_tooltip")
+        # refresh_button.text = tr("refresh")
+        # refresh_button.tooltip = tr("refresh_tooltip")
 
-        try:
-            menubar.items[0].update()
-            menubar.items[1].update()
-            menubar.items[3].update()
-            navigation_panel.content.controls[0].update()
-            nav_refs["home"].current.content.controls[1].update()
-            nav_refs["home"].current.content.controls[1].update()
-            nav_refs["users"].current.content.controls[1].update()
-            nav_refs["stats"].current.content.controls[1].update()
-            nav_refs["settings"].current.content.controls[1].update()
-            refresh_button.update()
+        # try:
+        #     menubar.items[0].update()
+        #     menubar.items[1].update()
+        #     menubar.items[3].update()
+        #     navigation_panel.content.controls[0].update()
+        #     nav_refs["home"].current.content.controls[1].update()
+        #     nav_refs["home"].current.content.controls[1].update()
+        #     nav_refs["users"].current.content.controls[1].update()
+        #     nav_refs["stats"].current.content.controls[1].update()
+        #     nav_refs["settings"].current.content.controls[1].update()
+        #     refresh_button.update()
 
-        except:
-            pass
-    
+        # except:
+        #     pass
+        
+        page.update()
     
 
     def show_message(text, color=ft.Colors.ERROR):
@@ -161,9 +163,11 @@ def main(page: ft.Page):
             # show_profile()
             page.on_keyboard_event = None
             page.on_login()  # Вызываем событие на успешный вход
+            show_message("")
         else:
             show_message(response.json().get("message", "Error"))
         password.value = ""
+        
 
     def show_profile():
         access_token = page.client_storage.get("access_token")
@@ -240,13 +244,8 @@ def main(page: ft.Page):
             # Обновляем надпись на кнопке
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
 
-            # Create threads for parallel execution
-            update_ui_thread = threading.Thread(target=update_ui)
-            selected_text_update_thread = threading.Thread(target=selected_text.update)
-            update_ui_thread.start()
-            selected_text_update_thread.start()
-            selected_text.update()
-            
+            update_ui()
+
 
         return ft.PopupMenuButton(
             tooltip="",
@@ -401,12 +400,18 @@ def main(page: ft.Page):
                 expand=True,
                 scroll=ft.ScrollMode.AUTO, # Добавьте режим прокрутки
                 controls=[
-                    ft.Text("🏠 Добро пожаловать на главную!", size=24),
+                    ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.HOME_ROUNDED, color=ft.Colors.WHITE, size=28),
+                            ft.Text(tr("home"), size=24, color=ft.Colors.WHITE),
+                        ],
+                    ),
+                    ft.Text("Добро пожаловать в ваше приложение!", size=18, color=ft.Colors.WHITE),
                 ]
             ),
         # visible=True,
-        # opacity=1.0,
-        animate=ft.Animation(duration=150, curve="decelerate"),
+        opacity=1.0,
+        animate=ft.Animation(duration=250, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -418,10 +423,13 @@ def main(page: ft.Page):
         width=0,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
         content=ft.Column(
-            
             controls=[
-                ft.Text("Зарегистрированные пользователи:", size=20, color=ft.Colors.WHITE),
-
+                ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.PEOPLE_ALT_OUTLINED, color=ft.Colors.WHITE, size=28),
+                        ft.Text("Зарегистрированные пользователи:", size=24, color=ft.Colors.WHITE),
+                    ],
+                ),
                 ft.ListView(
                         expand=True,
                         # scroll=ft.ScrollMode.AUTO,
@@ -432,11 +440,10 @@ def main(page: ft.Page):
             ],
             spacing=15,
             alignment=ft.MainAxisAlignment.START,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         # visible=False,
-        # opacity=0.0,
-        animate=ft.Animation(duration=150, curve="decelerate"),
+        opacity=0.0,
+        animate=ft.Animation(duration=250, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -452,13 +459,18 @@ def main(page: ft.Page):
                 expand=True,
                 scroll=ft.ScrollMode.AUTO, # Добавьте режим прокрутки
                 controls=[
-                    ft.Text("📊 Аналитика и статистика", size=24),
-                    # Добавьте другое содержимое здесь
+                        ft.Row(
+                            controls=[
+                                ft.Icon(ft.Icons.PEOPLE_ALT_OUTLINED, color=ft.Colors.WHITE, size=28),
+                                ft.Text("Аналитика и статистика", size=24, color=ft.Colors.WHITE),
+                            ],
+                        ),
+                        ft.Text("Здесь будет ваша аналитика и статистика", size=18, color=ft.Colors.WHITE),
                 ]
             ),
         # visible=False,
-        # opacity=0.0,
-        animate=ft.Animation(duration=150, curve="decelerate"),
+        opacity=0.0,
+        animate=ft.Animation(duration=250, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -473,13 +485,19 @@ def main(page: ft.Page):
                 expand=True,
                 scroll=ft.ScrollMode.AUTO, # Добавьте режим прокрутки
                 controls=[
-                    ft.Text("⚙️ Настройки приложения", size=24),
-                    # Добавьте другое содержимое здесь
-                ]
+                        ft.Row(
+                            controls=[
+                                ft.Icon(ft.Icons.SETTINGS, color=ft.Colors.WHITE, size=28),
+                                ft.Text("Настройки приложения", size=24, color=ft.Colors.WHITE),
+                            ],
+                        ),
+                        ft.Text("Здесь будут настройки вашего приложения", size=18, color=ft.Colors.WHITE),
+                    ],
+
             ),
         # visible=False,
-        # opacity=0.0,
-        animate=ft.Animation(duration=150, curve="decelerate"),
+        opacity=0.0,
+        animate=ft.Animation(duration=250, curve="decelerate"),
         animate_opacity=200
     )
 
@@ -502,14 +520,14 @@ def main(page: ft.Page):
         for key, view in views.items():
             if key == view_key:
                 # view.visible = True
-                # view.opacity = 1.0
+                view.opacity = 1.0
                 view.height=page.height-150
                 view.width=page.width*3.2
             else:
                 view.height=0
                 view.width=0
                 # view.visible = False
-                # view.opacity = 0.0
+                view.opacity = 0.0
             view.update()
 
         for key, ref in nav_refs.items():
@@ -674,7 +692,7 @@ def main(page: ft.Page):
                 login_btn,
                 register_btn,
                 lang,
-                
+
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
