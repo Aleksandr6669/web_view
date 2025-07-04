@@ -407,6 +407,7 @@ def main(page: ft.Page):
                         ],
                     ),
                     ft.Text("Добро пожаловать в ваше приложение!", size=18, color=ft.Colors.WHITE),
+                    ft.Text(f"Client IP: {page.client_ip}", size=18, color=ft.Colors.WHITE),
                 ]
             ),
         # visible=True,
@@ -764,16 +765,13 @@ def main(page: ft.Page):
             handle_login(e)
 
 
-
+   
     page.add(body)
-    
-    
     page.on_logout = show_login_screen
     page.on_login = show_profile
-    
     start_login()
     
-    
+
 if __name__ == "__main__":
     """
     Точка входа в приложение.
