@@ -70,28 +70,27 @@ def main(page: ft.Page):
         #     remember_me.update()
         # except:
         #     pass
-        
     
-        # # Обновляем элементы в menubar
-        # menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
-        # menubar.controls[0].controls[0].content = ft.Text(tr("profile"))  # Профиль
-        # menubar.controls[0].controls[1].content = ft.Text(tr("settings"))  # Настройки
-        # menubar.controls[0].controls[2].content = ft.Text(tr("logout"))  # Выход
+        # Обновляем элементы в menubar
+        menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
+        menubar.controls[0].controls[0].content = ft.Text(tr("profile"))  # Профиль
+        menubar.controls[0].controls[1].content = ft.Text(tr("settings"))  # Настройки
+        menubar.controls[0].controls[2].content = ft.Text(tr("logout"))  # Выход
 
-        # menubar.items[0].text = tr("profile")    # Профиль
-        # menubar.items[1].text = tr("settings")   # Настройки
-        # menubar.items[3].text = tr("logout")     # Выход
+        menubar.items[0].text = tr("profile")    # Профиль
+        menubar.items[1].text = tr("settings")   # Настройки
+        menubar.items[3].text = tr("logout")     # Выход
 
-        # navigation_panel.content.controls[0].value = tr("menu_title")
+        navigation_panel.content.controls[0].value = tr("menu_title")
 
 
-        # nav_refs["home"].current.content.controls[1].value = tr("home")
-        # nav_refs["users"].current.content.controls[1].value = tr("users")
-        # nav_refs["stats"].current.content.controls[1].value = tr("stats")
-        # nav_refs["settings"].current.content.controls[1].value = tr("settings")
+        nav_refs["home"].current.content.controls[1].value = tr("home")
+        nav_refs["users"].current.content.controls[1].value = tr("users")
+        nav_refs["stats"].current.content.controls[1].value = tr("stats")
+        nav_refs["settings"].current.content.controls[1].value = tr("settings")
 
-        # refresh_button.text = tr("refresh")
-        # refresh_button.tooltip = tr("refresh_tooltip")
+        refresh_button.text = tr("refresh")
+        refresh_button.tooltip = tr("refresh_tooltip")
 
         # try:
         #     menubar.items[0].update()
@@ -110,25 +109,6 @@ def main(page: ft.Page):
         
         page.update()
     
-    def show_loading_dialog():
-        loading_dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Смена языка..."),
-            content=ft.Row([
-                ft.ProgressRing(),
-                ft.Text("Пожалуйста, подождите...", size=16)
-            ], spacing=20),
-            actions=[],
-            actions_alignment=ft.MainAxisAlignment.END,
-            open=True
-        )
-        page.dialog = loading_dialog
-        page.update()
-
-    def hide_loading_dialog():
-        if page.dialog:
-            page.dialog.open = False
-            page.update()
 
     def show_message(text, color=ft.Colors.ERROR):
         msg.value = text
@@ -257,7 +237,6 @@ def main(page: ft.Page):
         selected_text = ft.Text(f"{languages.get(current_lang)[1]} {languages.get(current_lang)[0]}", size=14, weight=ft.FontWeight.W_600)
 
         def handle_lang_select(e):
-            show_loading_dialog()
             selected_lang = e.control.data
             page.client_storage.set("current_lang", selected_lang)
             tr = Translator(page)
@@ -266,7 +245,6 @@ def main(page: ft.Page):
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
 
             update_ui()
-            hide_loading_dialog()
 
 
         return ft.PopupMenuButton(
