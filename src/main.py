@@ -345,40 +345,131 @@ def main(page: ft.Page):
 
 
     users = [
-        {"username": "alice", "email": "alice@example.com"},
-        {"username": "bob", "email": "bob@example.com"},
-        {"username": "charlie", "email": "charlie@example.com"},
-        {"username": "alice", "email": "alice@example.com"},
-        {"username": "bob", "email": "bob@example.com"},
-        {"username": "charlie", "email": "charlie@example.com"},
-        {"username": "alice", "email": "alice@example.com"},
-        {"username": "bob", "email": "bob@example.com"},
-        {"username": "charlie", "email": "charlie@example.com"},
-        {"username": "alice", "email": "alice@example.com"},
-        {"username": "bob", "email": "bob@example.com"},
-        {"username": "charlie", "email": "charlie@example.com"},
+        {"username": "alice", "email": "alice@example.com", "full_name": "Алиса Иванова", "birth_date": "1990-01-01", "role": "Пользователь", "about": "Люблю котиков и Python 🐍", "ip": "192.168.1.10"},
+        {"username": "bob", "email": "bob@example.com", "full_name": "Боб Смит", "birth_date": "1985-05-12", "role": "Админ", "about": "Администрирую этот сервис", "ip": "192.168.1.11"},
+        {"username": "charlie", "email": "charlie@example.com", "full_name": "Чарли Браун", "birth_date": "1992-09-23", "role": "Пользователь", "about": "Пишу статьи о технологиях", "ip": "192.168.1.12"},
+        {"username": "diana", "email": "diana@example.com", "full_name": "Диана Кинг", "birth_date": "1995-03-15", "role": "Пользователь", "about": "Фотограф и путешественник", "ip": "192.168.1.13"},
+        {"username": "eva", "email": "eva@example.com", "full_name": "Ева Ли", "birth_date": "1998-07-30", "role": "Пользователь", "about": "Геймер и стример", "ip": "192.168.1.14"},
+        {"username": "frank", "email": "frank@example.com", "full_name": "Фрэнк Миллер", "birth_date": "1987-11-21", "role": "Пользователь", "about": "Люблю спорт и книги", "ip": "192.168.1.15"},
+        {"username": "grace", "email": "grace@example.com", "full_name": "Грейс Хоппер", "birth_date": "1991-02-10", "role": "Пользователь", "about": "Разработчик ПО", "ip": "192.168.1.16"},
+        {"username": "henry", "email": "henry@example.com", "full_name": "Генри Форд", "birth_date": "1989-06-18", "role": "Пользователь", "about": "Инженер и изобретатель", "ip": "192.168.1.17"},
+        {"username": "irina", "email": "irina@example.com", "full_name": "Ирина Коваленко", "birth_date": "1993-12-05", "role": "Пользователь", "about": "Дизайнер интерфейсов", "ip": "192.168.1.18"},
+        {"username": "jack", "email": "jack@example.com", "full_name": "Джек Лондон", "birth_date": "1986-09-14", "role": "Пользователь", "about": "Писатель и путешественник", "ip": "192.168.1.19"},
+        {"username": "kate", "email": "kate@example.com", "full_name": "Катя Петрова", "birth_date": "1997-04-22", "role": "Пользователь", "about": "Музыкант и преподаватель", "ip": "192.168.1.20"},
+        {"username": "leo", "email": "leo@example.com", "full_name": "Лео Месси", "birth_date": "1988-08-08", "role": "Пользователь", "about": "Футболист", "ip": "192.168.1.21"},
+        {"username": "maria", "email": "maria@example.com", "full_name": "Мария Сидорова", "birth_date": "1994-10-27", "role": "Пользователь", "about": "Флорист", "ip": "192.168.1.22"},
+        {"username": "nick", "email": "nick@example.com", "full_name": "Николай Васильев", "birth_date": "1996-05-03", "role": "Пользователь", "about": "Веб-разработчик", "ip": "192.168.1.23"},
+        {"username": "olga", "email": "olga@example.com", "full_name": "Ольга Романова", "birth_date": "1999-01-19", "role": "Пользователь", "about": "Студентка и волонтёр", "ip": "192.168.1.24"},
     ]
 
     def user_cards():
-        return [
-        ft.Container(
-            bgcolor=ft.Colors.BLUE_GREY_100,
-            border_radius=12,
-            padding=15,
-            margin=10,
-            animate_opacity=300,
-            opacity=1.0,
-            content=ft.Row([
-                # Убедитесь, что avatar_url доступен в этом контексте, или получите его для каждого пользователя, если он уникален
-                ft.CircleAvatar(foreground_image_src=avatar_url),
-                ft.Text(f"👤 {user['username']}", size=16, weight=ft.FontWeight.BOLD),
-                ft.Text(f"📧 {user['email']}", size=14, color=ft.Colors.BLUE_GREY_700),
-            ])
-        )
-        for user in users # <-- Цикл теперь внутри генератора списка
-    ]
+        def edit_user(e, user):
+            print(f"Редактировать: {user['username']}")
 
-    
+        def block_user(e, user):
+            print(f"Заблокировать: {user['username']}")
+
+        def delete_user(e, user):
+            print(f"Удалить: {user['username']}")
+
+        return [
+            ft.Container(
+                bgcolor=ft.Colors.WHITE,
+                border_radius=16,
+                padding=20,
+                margin=10,
+                # shadow=ft.BoxShadow(
+                #     blur_radius=18,
+                #     color=ft.Colors.BLUE_GREY_100,
+                #     spread_radius=2,
+                #     offset=ft.Offset(2, 4)
+                # ),
+                content=ft.Column([
+                    ft.Row([
+                        ft.CircleAvatar(
+                            foreground_image_src=avatar_url,
+                            radius=32,
+                            bgcolor=ft.Colors.BLUE_100,
+                        ),
+                        ft.Column([
+                            ft.Text(
+                                f"{user['full_name']}",
+                                size=20,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.BLUE_GREY_900,
+                                expand=True
+                            ),
+                            ft.Text(
+                                f"@{user['username']}",
+                                size=16,
+                                color=ft.Colors.BLUE_400,
+                                expand=True
+                            ),
+                        ], spacing=2, expand=True),
+                        ft.Container(
+                            padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                            bgcolor=ft.Colors.AMBER_100 if user['role'] == "Админ" else ft.Colors.BLUE_GREY_50,
+                            border_radius=8,
+                            content=ft.Text(
+                                user['role'],
+                                size=14,
+                                color=ft.Colors.AMBER_900 if user['role'] == "Админ" else ft.Colors.BLUE_GREY_700,
+                                weight=ft.FontWeight.W_600
+                            )
+                        )
+                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                    ft.Divider(height=18, color=ft.Colors.BLUE_GREY_50),
+                    ft.Row([
+                        ft.Icon(ft.Icons.EMAIL, size=18, color=ft.Colors.BLUE_GREY_400),
+                        ft.Text(user['email'], size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
+                    ], spacing=8),
+                    ft.Row([
+                        ft.Icon(ft.Icons.CALENDAR_MONTH, size=18, color=ft.Colors.BLUE_GREY_400),
+                        ft.Text(f"Дата рождения: {user['birth_date']}", size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
+                    ], spacing=8),
+                    ft.Row([
+                        ft.Icon(ft.Icons.PUBLIC, size=18, color=ft.Colors.BLUE_GREY_400),
+                        ft.Text(f"IP: {user['ip']}", size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
+                    ], spacing=8),
+                    ft.Container(
+                        margin=ft.margin.only(top=8, bottom=8),
+                        content=ft.Text(
+                            f"О себе: {user['about']}",
+                            size=15,
+                            color=ft.Colors.BLUE_GREY_800,
+                            italic=True,
+                            expand=True,
+                            text_align=ft.TextAlign.JUSTIFY
+                        )
+                    ),
+                    ft.Row([
+                        ft.ElevatedButton(
+                            "Редактировать",
+                            icon=ft.Icons.EDIT,
+                            on_click=lambda e, u=user: edit_user(e, u),
+                            bgcolor=ft.Colors.AMBER_300,
+                            color=ft.Colors.BLUE_GREY_900
+                        ),
+                        ft.ElevatedButton(
+                            "Заблокировать",
+                            icon=ft.Icons.BLOCK,
+                            on_click=lambda e, u=user: block_user(e, u),
+                            bgcolor=ft.Colors.RED_100,
+                            color=ft.Colors.RED_900
+                        ),
+                        ft.ElevatedButton(
+                            "Удалить",
+                            icon=ft.Icons.DELETE,
+                            on_click=lambda e, u=user: delete_user(e, u),
+                            bgcolor=ft.Colors.RED_400,
+                            color=ft.Colors.WHITE
+                        ),
+                    ], spacing=12, alignment=ft.MainAxisAlignment.END)
+                ], spacing=8)
+            )
+            for user in users
+        ]
+        
 
     active_view = ft.Ref[str]()     # создаём ссылку
     active_view.current = "home"    # и только потом кладём значение
