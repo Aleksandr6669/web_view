@@ -158,12 +158,12 @@ def main(page: ft.Page):
 
         if response.status_code == 200:
             access_token = response.json().get("access_token")
-            show_message(tr("welcome") + f", {email}!", ft.Colors.LIGHT_GREEN_400)
             page.client_storage.set("access_token", access_token)
             # show_profile()
             page.on_keyboard_event = None
-            page.on_login()  # Вызываем событие на успешный вход
             show_message("")
+            page.on_login()  # Вызываем событие на успешный вход
+            
         else:
             show_message(response.json().get("message", "Error"))
         password.value = ""
