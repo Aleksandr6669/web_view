@@ -312,7 +312,7 @@ def main(page: ft.Page):
                             alignment=ft.alignment.center,  # Центрируем содержимое контейнера
                             content=ft.Row(
                                 height=40,
-                                controls=[,
+                                controls=[
                                 lang,
                                 menubar,
                                 ft.Container(
