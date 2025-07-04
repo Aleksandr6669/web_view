@@ -61,15 +61,16 @@ def main(page: ft.Page):
         login_btn.text = tr("login")
         register_btn.text = tr("register")
         remember_me.label = tr("remember_me")
-        try:
-            title.update()
-            username.update()
-            password.update()
-            login_btn.update()
-            register_btn.update()
-            remember_me.update()
-        except:
-            pass
+        # try:
+        #     title.update()
+        #     username.update()
+        #     password.update()
+        #     login_btn.update()
+        #     register_btn.update()
+        #     remember_me.update()
+        # except:
+        #     pass
+        
     
         # # Обновляем элементы в menubar
         # menubar.controls[0].content = ft.Text(tr("menu"))  # Название для SubmenuButton
@@ -109,6 +110,25 @@ def main(page: ft.Page):
         
         page.update()
     
+    def show_loading_dialog():
+        loading_dialog = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Смена языка..."),
+            content=ft.Row([
+                ft.ProgressRing(),
+                ft.Text("Пожалуйста, подождите...", size=16)
+            ], spacing=20),
+            actions=[],
+            actions_alignment=ft.MainAxisAlignment.END,
+            open=True
+        )
+        page.dialog = loading_dialog
+        page.update()
+
+    def hide_loading_dialog():
+        if page.dialog:
+            page.dialog.open = False
+            page.update()
 
     def show_message(text, color=ft.Colors.ERROR):
         msg.value = text
@@ -237,6 +257,7 @@ def main(page: ft.Page):
         selected_text = ft.Text(f"{languages.get(current_lang)[1]} {languages.get(current_lang)[0]}", size=14, weight=ft.FontWeight.W_600)
 
         def handle_lang_select(e):
+            show_loading_dialog()
             selected_lang = e.control.data
             page.client_storage.set("current_lang", selected_lang)
             tr = Translator(page)
@@ -245,6 +266,7 @@ def main(page: ft.Page):
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
 
             update_ui()
+            hide_loading_dialog()
 
 
         return ft.PopupMenuButton(
