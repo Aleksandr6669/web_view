@@ -38,8 +38,6 @@ def main(page: ft.Page):
         try:
             if page.client_storage.get("access_token") is not None and page.client_storage.get("remember_me") == True:
                 page.on_login()  # Вызываем событие на успешный вход
-            elif page.client_storage.get("access_token") is not None and page.client_storage.get("is_login_screen") is not None:
-                page.on_login()
             else:
                 page.on_logout(None)
         except:
@@ -299,20 +297,7 @@ def main(page: ft.Page):
         ],
     )
 
-    refresh_button = ft.ElevatedButton(
-        text=tr("refresh"),
-        tooltip=tr("refresh_tooltip"),
-        icon=ft.Icons.REFRESH,
-        style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=12),
-            bgcolor=ft.Colors.BLUE_500,
-            color=ft.Colors.WHITE,
-            overlay_color=ft.Colors.BLUE_100,
-            padding=ft.padding.symmetric(horizontal=20, vertical=12),
-            elevation=3,
-        ),
-        on_click=lambda e: reset_ui()
-    )
+
     # Панель навигации
     navbar = ft.Container(
                 bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
@@ -327,8 +312,7 @@ def main(page: ft.Page):
                             alignment=ft.alignment.center,  # Центрируем содержимое контейнера
                             content=ft.Row(
                                 height=40,
-                                controls=[
-                                refresh_button,
+                                controls=[,
                                 lang,
                                 menubar,
                                 ft.Container(
@@ -746,19 +730,7 @@ def main(page: ft.Page):
             expand=True,                   # Растягиваем Stack на весь доступный размер
             
         )
-    
-    def reset_ui():
-        page.client_storage.set("is_login_screen", True)
-        page.clean()
-        main(page)
-        page.client_storage.remove("is_login_screen")
 
-        
-        # page.on_login()
-
-        # container.content.controls.clear()
-        # container.content.update()
-        # show_profile()
 
     def handle_key(e: ft.KeyboardEvent):
         if e.key == "Enter":
@@ -769,6 +741,7 @@ def main(page: ft.Page):
     page.add(body)
     page.on_logout = show_login_screen
     page.on_login = show_profile
+    page.on_keyboard_event = handle_key
     start_login()
     
 
