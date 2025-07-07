@@ -18,7 +18,7 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     # page.bgcolor = ft.Colors.TRANSPARENT
     page.padding = 0
-    password_visible = ft.Ref[bool]()
+    password_visible = ft.Ref[bool]() # Ref to track password visibility state
     password_field = ft.Ref[ft.TextField]()
    
 
@@ -61,15 +61,7 @@ def main(page: ft.Page):
         login_btn.text = tr("login")
         register_btn.text = tr("register")
         remember_me.label = tr("remember_me")
-        # try:
-        #     title.update()
-        #     username.update()
-        #     password.update()
-        #     login_btn.update()
-        #     register_btn.update()
-        #     remember_me.update()
-        # except:
-        #     pass
+ 
     
 
         menubar.items[0].text = tr("profile")    # Профиль
@@ -84,23 +76,28 @@ def main(page: ft.Page):
         nav_refs["stats"].current.content.controls[1].value = tr("stats")
         nav_refs["settings"].current.content.controls[1].value = tr("settings")
 
-        # refresh_button.text = tr("refresh")
-        # refresh_button.tooltip = tr("refresh_tooltip")
+ 
+        home_view.content.controls[0].controls[1].value = tr("home") # Заголовок
+        home_view.content.controls[1].value = tr("welcome") # Текст приветствия
 
-        # try:
-        #     menubar.items[0].update()
-        #     menubar.items[1].update()
-        #     menubar.items[3].update()
-        #     navigation_panel.content.controls[0].update()
-        #     nav_refs["home"].current.content.controls[1].update()
-        #     nav_refs["home"].current.content.controls[1].update()
-        #     nav_refs["users"].current.content.controls[1].update()
-        #     nav_refs["stats"].current.content.controls[1].update()
-        #     nav_refs["settings"].current.content.controls[1].update()
-        #     refresh_button.update()
+ 
+        users_view.content.controls[0].controls[1].value = tr("registered_users") # Заголовок
 
-        # except:
-        #     pass
+        # password_field.current.suffix.content.tooltip = tr("toggle_password_visibility")
+
+        if password_field.current and \
+            password_field.current.suffix and \
+            password_field.current.suffix.content and \
+            isinstance(password_field.current.suffix.content, ft.IconButton):
+                password_field.current.suffix.content.tooltip = tr("toggle_password_visibility")
+                
+
+       
+        for user_container in users_view.content.controls[1].controls:
+            user_container.content.controls[6].controls[0].text = tr("edit")
+            user_container.content.controls[6].controls[1].text = tr("block")
+            user_container.content.controls[6].controls[2].text = tr("delete")
+
         
         page.update()
     
@@ -373,20 +370,14 @@ def main(page: ft.Page):
             print(f"Удалить: {user['username']}")
 
         return [
-            ft.Container(
+            ft.Container(  # Start ft.Container
                 bgcolor=ft.Colors.WHITE,
                 border_radius=16,
                 padding=20,
                 margin=10,
-                # shadow=ft.BoxShadow(
-                #     blur_radius=18,
-                #     color=ft.Colors.BLUE_GREY_100,
-                #     spread_radius=2,
-                #     offset=ft.Offset(2, 4)
-                # ),
-                content=ft.Column([
-                    ft.Row([
-                        ft.CircleAvatar(
+                content=ft.Column([  # Start ft.Column
+                    ft.Row([  # Start ft.Row (header)
+                        ft.CircleAvatar(  # Start ft.CircleAvatar
                             foreground_image_src=avatar_url,
                             radius=32,
                             bgcolor=ft.Colors.BLUE_100,
@@ -405,7 +396,7 @@ def main(page: ft.Page):
                                 color=ft.Colors.BLUE_400,
                                 expand=True
                             ),
-                        ], spacing=2, expand=True),
+                        ], spacing=2, expand=True),  # End ft.Column
                         ft.Container(
                             padding=ft.padding.symmetric(horizontal=8, vertical=4),
                             bgcolor=ft.Colors.AMBER_100 if user['role'] == "Админ" else ft.Colors.BLUE_GREY_50,
@@ -416,57 +407,55 @@ def main(page: ft.Page):
                                 color=ft.Colors.AMBER_900 if user['role'] == "Админ" else ft.Colors.BLUE_GREY_700,
                                 weight=ft.FontWeight.W_600
                             )
-                        )
-                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                        )  # End ft.Container
+                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),  # End ft.Row (header)
                     ft.Divider(height=18, color=ft.Colors.BLUE_GREY_50),
-                    ft.Row([
+                    ft.Row([  # Start ft.Row (email)
                         ft.Icon(ft.Icons.EMAIL, size=18, color=ft.Colors.BLUE_GREY_400),
                         ft.Text(user['email'], size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
-                    ], spacing=8),
-                    ft.Row([
+                    ], spacing=8),  # End ft.Row (email)
+                    ft.Row([  # Start ft.Row (birth date)
                         ft.Icon(ft.Icons.CALENDAR_MONTH, size=18, color=ft.Colors.BLUE_GREY_400),
-                        ft.Text(f"Дата рождения: {user['birth_date']}", size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
-                    ], spacing=8),
-                    ft.Row([
+                        ft.Text(f"{user['birth_date']}", size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
+                    ], spacing=8),  # End ft.Row (birth date)
+                    ft.Row([  # Start ft.Row (IP)
                         ft.Icon(ft.Icons.PUBLIC, size=18, color=ft.Colors.BLUE_GREY_400),
-                        ft.Text(f"IP: {user['ip']}", size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
-                    ], spacing=8),
-                    ft.Container(
+                        ft.Text(f"{tr('ip')}: {user['ip']}", size=15, color=ft.Colors.BLUE_GREY_700, expand=True)
+                    ], spacing=8),  # End ft.Row (IP)
+                    ft.Container(  # Start ft.Container (about)
                         margin=ft.margin.only(top=8, bottom=8),
                         content=ft.Text(
-                            f"О себе: {user['about']}",
+                            f"{user['about']}",
                             size=15,
                             color=ft.Colors.BLUE_GREY_800,
                             italic=True,
                             expand=True,
                             text_align=ft.TextAlign.JUSTIFY
                         )
-                    ),
-                    ft.Row([
-                        ft.ElevatedButton(
-                            "Редактировать",
-                            icon=ft.Icons.EDIT,
-                            on_click=lambda e, u=user: edit_user(e, u),
-                            bgcolor=ft.Colors.AMBER_300,
-                            color=ft.Colors.BLUE_GREY_900
-                        ),
-                        ft.ElevatedButton(
-                            "Заблокировать",
-                            icon=ft.Icons.BLOCK,
-                            on_click=lambda e, u=user: block_user(e, u),
-                            bgcolor=ft.Colors.RED_100,
-                            color=ft.Colors.RED_900
-                        ),
-                        ft.ElevatedButton(
-                            "Удалить",
-                            icon=ft.Icons.DELETE,
+                    ),  # End ft.Container (about)
+                    ft.Row([  # Start ft.Row (buttons)
+                            ft.ElevatedButton(
+                                tr("edit"),
+                                icon=ft.Icons.EDIT,
+                                on_click=lambda e, u=user: edit_user(e, u),
+                                bgcolor=ft.Colors.AMBER_300,
+                                color=ft.Colors.BLUE_GREY_900,
+                            ),
+                            ft.ElevatedButton(
+                                tr("block"),
+                                icon=ft.Icons.BLOCK,
+                                on_click=lambda e, u=user: block_user(e, u),
+                                bgcolor=ft.Colors.RED_100,
+                                color=ft.Colors.RED_900
+                            ),
+                            ft.ElevatedButton(tr("delete"), icon=ft.Icons.DELETE,
                             on_click=lambda e, u=user: delete_user(e, u),
                             bgcolor=ft.Colors.RED_400,
                             color=ft.Colors.WHITE
                         ),
-                    ], spacing=12, alignment=ft.MainAxisAlignment.END)
-                ], spacing=8)
-            )
+                    ], spacing=12, alignment=ft.MainAxisAlignment.END),  # End ft.Row (buttons)
+                ], spacing=8)  # End ft.Column
+            )  # End ft.Container
             for user in users
         ]
         
@@ -479,7 +468,7 @@ def main(page: ft.Page):
         expand=True,
         padding=15,
         border_radius=10,
-        height=page.height - 150,
+        height=page.height - 120,
         width=page.width*3.2,
         bgcolor=ft.Colors.with_opacity(0.3, ft.Colors.BLUE_GREY_500),
         content=ft.Column( # Добавьте Column здесь
@@ -492,8 +481,8 @@ def main(page: ft.Page):
                             ft.Text(tr("home"), size=24, color=ft.Colors.WHITE),
                         ],
                     ),
-                    ft.Text("Добро пожаловать в ваше приложение!", size=18, color=ft.Colors.WHITE),
-                    ft.Text(f"Client IP: {page.client_ip}", size=18, color=ft.Colors.WHITE),
+                    ft.Text(tr("welcome"), size=18, color=ft.Colors.WHITE),
+                    ft.Text(f"Client IP: {page.client_ip}", size=18, color=ft.Colors.WHITE), # Этот текст пока не трогаем, так как он специфичен и не относится к общим переводам
                 ]
             ),
         # visible=True,
@@ -514,7 +503,7 @@ def main(page: ft.Page):
                 ft.Row(
                     controls=[
                         ft.Icon(ft.Icons.PEOPLE_ALT_OUTLINED, color=ft.Colors.WHITE, size=28),
-                        ft.Text("Зарегистрированные пользователи:", size=24, color=ft.Colors.WHITE),
+                        ft.Text(tr("registered_users"), size=24, color=ft.Colors.WHITE),
                     ],
                 ),
                 ft.ListView(
@@ -549,11 +538,11 @@ def main(page: ft.Page):
                         ft.Row(
                             controls=[
                                 ft.Icon(ft.Icons.PEOPLE_ALT_OUTLINED, color=ft.Colors.WHITE, size=28),
-                                ft.Text("Аналитика и статистика", size=24, color=ft.Colors.WHITE),
+                                ft.Text(tr("analytics_and_stats"), size=24, color=ft.Colors.WHITE),
                             ],
                         ),
-                        ft.Text("Здесь будет ваша аналитика и статистика", size=18, color=ft.Colors.WHITE),
-                ]
+                        ft.Text(tr("analytics_and_stats"), size=18, color=ft.Colors.WHITE), # Используем тот же ключ
+                    ]
             ),
         # visible=False,
         opacity=0.0,
@@ -575,11 +564,11 @@ def main(page: ft.Page):
                         ft.Row(
                             controls=[
                                 ft.Icon(ft.Icons.SETTINGS, color=ft.Colors.WHITE, size=28),
-                                ft.Text("Настройки приложения", size=24, color=ft.Colors.WHITE),
+                                ft.Text(tr("app_settings"), size=24, color=ft.Colors.WHITE),
                             ],
                         ),
-                        ft.Text("Здесь будут настройки вашего приложения", size=18, color=ft.Colors.WHITE),
-                    ],
+                        ft.Text(tr("app_settings"), size=18, color=ft.Colors.WHITE), # Используем тот же ключ
+                    ]
 
             ),
         # visible=False,
@@ -608,7 +597,7 @@ def main(page: ft.Page):
             if key == view_key:
                 # view.visible = True
                 view.opacity = 1.0
-                view.height=page.height-150
+                view.height=page.height-110
                 view.width=page.width*3.2
             else:
                 view.height=0
@@ -706,33 +695,46 @@ def main(page: ft.Page):
     username.auto_focus = True
 
     def toggle_visibility(e):
-        password_visible.current = not password_visible.current
-        password_field.current.password = not password_visible.current
-        password_field.current.suffix = ft.IconButton(
-            icon=ft.Icons.VISIBILITY_OFF if password_visible.current else ft.Icons.VISIBILITY,
-            on_click=toggle_visibility,
-            icon_color=ft.Colors.BLUE_300,
-        )
+        if password_field.current is not None:
+            password_visible.current = not password_visible.current
+            password_field.current.password = not password_visible.current
+            
+            # Обновляем иконку и tooltip
+            if password_field.current.suffix and password_field.current.suffix.content:
+                password_field.current.suffix.content.icon = \
+                    ft.Icons.VISIBILITY_OFF if password_visible.current else ft.Icons.VISIBILITY
+                password_field.current.suffix.content.tooltip = tr("toggle_password_visibility")
+            
+            password_field.current.update()
+
+    # --- Улучшенная функция show_password_on_hover ---
+    def show_password_on_hover(e: ft.HoverEvent):
         password_field.current.update()
 
+    # --- Определение TextField 'password' ---
     password = ft.TextField(
         label=tr("password"),
-        password=True,
-        # suffix=ft.Container(
-        #     content=ft.IconButton(
-        #         icon=ft.Icons.VISIBILITY,
-        #         on_click=toggle_visibility,
-        #         icon_color=ft.Colors.BLUE_300,
-        #         icon_size=20,
-        #         style=ft.ButtonStyle(padding=2),
-        #     ),
-        #     width=20,
-        #     height=20,
-        #     alignment=ft.alignment.center,
-        # ),
+        ref=password_field,
+        password=True, # Изначально пароль скрыт
+        suffix=ft.Container(
+            content=ft.IconButton(
+                icon=ft.Icons.VISIBILITY, # Иконка "показать" по умолчанию
+                on_click=toggle_visibility, # Клик переключает постоянное состояние
+                icon_color=ft.Colors.BLUE_700,
+                icon_size=16,
+                padding=0,
+                style=ft.ButtonStyle(padding=0),
+                tooltip=tr("toggle_password_visibility"), # Всплывающая подсказка при наведении
+            ),
+            on_hover=show_password_on_hover, # Наведение временно меняет видимость пароля
+            ink=True, # Для визуального отклика наведения
+            # Можете попробовать добавить ширину/высоту для контейнера, чтобы гарантировать область наведения
+            # width=40,
+            # height=40,
+        ),
         width=300,
         height=50,
-        text_style=ft.TextStyle(color=ft.Colors.WHITE, size=14),
+        text_style=ft.TextStyle(color=ft.Colors.WHITE, size=16),
         text_vertical_align=ft.VerticalAlignment.CENTER,
         border_radius=20,
         bgcolor=ft.Colors.WHITE10,
@@ -870,6 +872,6 @@ if __name__ == "__main__":
     ft.app(main,
         assets_dir="assets", 
         view=ft.AppView.WEB_BROWSER, 
-        port=port
-        # port=9002
+        # port=port
+        port=9002
      )

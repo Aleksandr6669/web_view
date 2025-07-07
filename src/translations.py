@@ -19,8 +19,21 @@ class Translator:
             "stats": "Статистика",
             "profile": "Профиль",
             "settings": "Настройки",
-            "logout": "Выход"
+            "logout": "Выход",
+            "birth_date": "Дата рождения",
+            "ip": "IP",
+            "about_me": "О себе",
+            "edit": "Редактировать",
+            "block": "Заблокировать",
+            "delete": "Удалить",
+            "registered_users": "Зарегистрированные пользователи",
+            "analytics_and_stats": "Аналитика и статистика",
+            "app_settings": "Настройки приложения",
+            "toggle_password_visibility": "Показать пароль",
+            "message": "Сообщение",
+            "Error": "Ошибка",
         },
+
         "en": {
             "welcome": "Welcome to Stream!",
             "username": "Username (Email)",
@@ -42,7 +55,19 @@ class Translator:
             "settings": "Settings",
             "logout": "Logout",
             "refresh": "Refresh",
-            "refresh_tooltip": "Restart interface if it glitches 🛠️"
+            "refresh_tooltip": "Restart interface if it glitches 🛠️",
+            "birth_date": "Birth date",
+            "ip": "IP",
+            "about_me": "About me",
+            "edit": "Edit",
+            "block": "Block",
+            "delete": "Delete",
+            "registered_users": "Registered users",
+            "analytics_and_stats": "Analytics and statistics",
+            "app_settings": "App settings",
+            "toggle_password_visibility": "Show password",
+            "message": "Message",
+            "Error": "Error",
         },
         "ua": {
             "welcome": "Ласкаво просимо в Потік!",
@@ -65,7 +90,19 @@ class Translator:
             "settings": "Налаштування",
             "logout": "Вихід",
             "refresh": "Оновити",
-            "refresh_tooltip": "Перезапустити інтерфейс, якщо щось зависло 🛠️"
+            "refresh_tooltip": "Перезапустити інтерфейс, якщо щось зависло 🛠️",
+            "birth_date": "Дата народження",
+            "ip": "IP",
+            "about_me": "Про себе",
+            "edit": "Редагувати",
+            "block": "Заблокувати",
+            "delete": "Видалити",
+            "registered_users": "Зареєстровані користувачі",
+            "analytics_and_stats": "Аналітика та статистика",
+            "app_settings": "Налаштування програми",
+            "toggle_password_visibility": "Показати пароль",
+            "message": "Повідомлення",
+            "Error": "Помилка",
         },
         "fr": {
             "welcome": "Bienvenue dans Flux!",
@@ -88,7 +125,19 @@ class Translator:
             "settings": "Paramètres",
             "logout": "Déconnexion",
             "refresh": "Rafraîchir",
-            "refresh_tooltip": "Redémarrer l’interface en cas de bug 🛠️"
+            "refresh_tooltip": "Redémarrer l’interface en cas de bug 🛠️",
+            "birth_date": "Date de naissance",
+            "ip": "IP",
+            "about_me": "À propos de moi",
+            "edit": "Modifier",
+            "block": "Bloquer",
+            "delete": "Supprimer",
+            "registered_users": "Utilisateurs enregistrés",
+            "analytics_and_stats": "Analytique et statistiques",
+            "app_settings": "Paramètres de l'application",
+            "toggle_password_visibility": "Afficher le mot de passe",
+            "message": "Message",
+            "Error": "Erreur",
         },
         "zh": {
             "welcome": "欢迎来到流!",
@@ -111,11 +160,21 @@ class Translator:
             "settings": "设置",
             "logout": "退出",
             "refresh": "刷新",
-            "refresh_tooltip": "界面卡住时重新加载 🛠️"
+            "refresh_tooltip": "界面卡住时重新加载 🛠️",
+            "birth_date": "出生日期",
+            "ip": "IP",
+            "about_me": "关于我",
+            "edit": "编辑",
+            "block": "阻止",
+            "delete": "删除",
+            "registered_users": "注册用户",
+            "analytics_and_stats": "分析和统计",
+            "app_settings": "应用设置",
+            "toggle_password_visibility": "显示密码",
+            "message": "消息",
+            "Error": "错误",
         }
     }
-
-
 
     def __init__(self, page):
         # Инициализация с выбранным языком, по умолчанию используется английский
