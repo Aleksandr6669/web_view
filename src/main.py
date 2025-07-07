@@ -83,7 +83,13 @@ def main(page: ft.Page):
  
         users_view.content.controls[0].controls[1].value = tr("registered_users") # Заголовок
 
-        # password_field.current.suffix.content.tooltip = tr("toggle_password_visibility")
+
+        stats_view.content.controls[0].controls[1].value = tr("analytics_and_stats") # Заголовок
+        stats_view.content.controls[1].value = tr("analytics_and_stats") # Текст приветствия
+
+        settings_view.content.controls[0].controls[1].value = tr("app_settings") # Заголовок
+        settings_view.content.controls[1].value = tr("app_settings") # Текст приветствия
+
 
         if password_field.current and \
             password_field.current.suffix and \
