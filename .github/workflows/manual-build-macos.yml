@@ -1,11 +1,11 @@
 name: Manual macOS Build for Flet
 
 on:
-  workflow_dispatch:  # Ручной запуск по кнопке
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest  # Используем macOS для сборки
+    runs-on: macos-latest  
 
     steps:
     - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
       run: pip install flet
 
     - name: Build macOS App
-      run: flet build macos  # Команда для сборки .app
+      run: flet build macos  
 
     - name: Upload macOS App
       uses: actions/upload-artifact@v4
