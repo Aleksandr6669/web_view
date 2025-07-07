@@ -16,6 +16,9 @@ jobs:
       with:
         python-version: '3.9'
 
+    - name: Install Flet and other dependencies
+      run: pip install -r requirements.txt
+
     - name: Install Flet
       run: pip install flet
 
