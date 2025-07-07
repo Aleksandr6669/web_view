@@ -906,6 +906,6 @@ if __name__ == "__main__":
     ft.app(main,
         assets_dir="assets", 
         view=ft.AppView.WEB_BROWSER, 
-        port=port
-        # port=9002
+        # port=port
+        port=9002
      )
