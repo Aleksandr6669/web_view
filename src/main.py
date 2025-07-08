@@ -48,11 +48,11 @@ def main(page: ft.Page):
         tr = Translator(page)
 
         lang_popup(page)
-        # update_ui()
+        
     
     
 
-    def update_ui():
+    def update_ui_profile():
         page.title = tr("welcome")
         
         title.value = tr("welcome")
@@ -121,6 +121,27 @@ def main(page: ft.Page):
             user_container.content.controls[3].controls[1].text = tr("block")
             user_container.content.controls[3].controls[2].text = tr("delete")
 
+
+
+        
+        page.update()
+
+
+    def update_ui_login():
+        page.title = tr("welcome")
+        
+        title.value = tr("welcome")
+        username.label = tr("username")
+        password.label = tr("password")
+        login_btn.text = tr("login")
+        register_btn.text = tr("register")
+        remember_me.label = tr("remember_me")
+ 
+        if password_field.current and \
+            password_field.current.suffix and \
+            password_field.current.suffix.content and \
+            isinstance(password_field.current.suffix.content, ft.IconButton):
+                password_field.current.suffix.content.tooltip = tr("toggle_password_visibility")
 
 
         
@@ -209,6 +230,7 @@ def main(page: ft.Page):
             container.width = 2400
             container.height = 1800
             container.content = profile_content
+            
 
         else:
 
@@ -261,7 +283,14 @@ def main(page: ft.Page):
             # Обновляем надпись на кнопке
             selected_text.value = f"{languages[selected_lang][1]} {languages[selected_lang][0]}"
 
-            update_ui()
+            profile_thread = threading.Thread(target=update_ui_profile)
+            profile_thread.start()
+
+            login_thread = threading.Thread(target=update_ui_login)
+            login_thread.start()
+
+            # update_ui_login()
+
 
 
         return ft.PopupMenuButton(
@@ -305,7 +334,7 @@ def main(page: ft.Page):
 
         # Меню появляется ПОД аватаркой
         menu_position=ft.PopupMenuPosition.UNDER,
-        bgcolor=ft.Colors.with_opacity(0.7, ft.Colors.BLUE_GREY_700),
+        bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.BLUE_800),
 
         # Пункты меню
         items=[
@@ -346,7 +375,7 @@ def main(page: ft.Page):
                                 height=40,
                                 controls=[
                                 # refresh_button,
-                                lang,
+                                # lang,
                                 menubar,
                                 ft.Container(
                                     width=20,
@@ -906,6 +935,6 @@ if __name__ == "__main__":
     ft.app(main,
         assets_dir="assets", 
         view=ft.AppView.WEB_BROWSER, 
-        port=port
-        # port=9002
+        # port=port
+        port=9002
      )
