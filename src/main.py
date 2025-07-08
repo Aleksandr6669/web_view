@@ -20,6 +20,7 @@ def main(page: ft.Page):
     page.padding = 0
     password_visible = ft.Ref[bool]() # Ref to track password visibility state
     password_field = ft.Ref[ft.TextField]()
+    loading = ft.Ref[ft.ProgressBar]()
    
 
     
@@ -53,16 +54,6 @@ def main(page: ft.Page):
     
 
     def update_ui_profile():
-        page.title = tr("welcome")
-        
-        title.value = tr("welcome")
-        username.label = tr("username")
-        password.label = tr("password")
-        login_btn.text = tr("login")
-        register_btn.text = tr("register")
-        remember_me.label = tr("remember_me")
- 
-    
 
         menubar.items[0].text = tr("profile")    # Профиль
         menubar.items[1].text = tr("settings")   # Настройки
@@ -81,8 +72,6 @@ def main(page: ft.Page):
         home_view.content.controls[1].value = tr("welcome") # Текст приветствия
 
  
-        
-
 
         stats_view.content.controls[0].controls[1].value = tr("analytics_and_stats") # Заголовок
         stats_view.content.controls[1].value = tr("analytics_and_stats") # Текст приветствия
@@ -92,35 +81,7 @@ def main(page: ft.Page):
 
         
 
-
-        if password_field.current and \
-            password_field.current.suffix and \
-            password_field.current.suffix.content and \
-            isinstance(password_field.current.suffix.content, ft.IconButton):
-                password_field.current.suffix.content.tooltip = tr("toggle_password_visibility")
-
-        
-
         users_view.content.controls[0].controls[1].value = tr("registered_users") # Заголовок
-
-
-        # Очищаем контейнер с карточками пользователей
-        users_view.content.controls[1].controls.clear()
-
-        # Создаем новые карточки с актуальными переводами
-        updated_user_cards = user_cards()
-
-        # Добавляем обновленные карточки в контейнер
-        for card in updated_user_cards:
-            users_view.content.controls[1].controls.append(card)
-        
-        
-        for user_container in users_view.content.controls[1].controls:
-            # Обновление текста кнопок
-            user_container.content.controls[3].controls[0].text = tr("edit")
-            user_container.content.controls[3].controls[1].text = tr("block")
-            user_container.content.controls[3].controls[2].text = tr("delete")
-
 
 
         
@@ -395,24 +356,26 @@ def main(page: ft.Page):
             )
 
 
-    users = [
-        {"username": "alice", "email": "alice@example.com", "full_name": "Алиса Иванова", "birth_date": "1990-01-01", "role": "user", "about": "Люблю котиков и Python 🐍", "ip": "192.168.1.10", "phone": "+380501112233"},
-        {"username": "bob", "email": "bob@example.com", "full_name": "Боб Смит", "birth_date": "1985-05-12", "role": "admin", "about": "Администрирую этот сервис", "ip": "192.168.1.11", "phone": "+380674445566"},
-        {"username": "charlie", "email": "charlie@example.com", "full_name": "Чарли Браун", "birth_date": "1992-09-23", "role": "user", "about": "Пишу статьи о технологиях", "ip": "192.168.1.12", "phone": "+380637778899"},
-        {"username": "diana", "email": "diana@example.com", "full_name": "Диана Кинг", "birth_date": "1995-03-15", "role": "user", "about": "Фотограф и путешественник", "ip": "192.168.1.13", "phone": "+380991234567"},
-        {"username": "eva", "email": "eva@example.com", "full_name": "Ева Ли", "birth_date": "1998-07-30", "role": "user", "about": "Геймер и стример", "ip": "192.168.1.14", "phone": "+380978765432"},
-        {"username": "frank", "email": "frank@example.com", "full_name": "Фрэнк Миллер", "birth_date": "1987-11-21", "role": "user", "about": "Люблю спорт и книги", "ip": "192.168.1.15", "phone": "+380681113355"},
-        {"username": "grace", "email": "grace@example.com", "full_name": "Грейс Хоппер", "birth_date": "1991-02-10", "role": "user", "about": "Разработчик ПО", "ip": "192.168.1.16", "phone": "+380932224466"},
-        {"username": "henry", "email": "henry@example.com", "full_name": "Генри Форд", "birth_date": "1989-06-18", "role": "user", "about": "Инженер и изобретатель", "ip": "192.168.1.17", "phone": "+380503337799"},
-        {"username": "irina", "email": "irina@example.com", "full_name": "Ирина Коваленко", "birth_date": "1993-12-05", "role": "user", "about": "Дизайнер интерфейсов", "ip": "192.168.1.18", "phone": "+380675551122"},
-        {"username": "jack", "email": "jack@example.com", "full_name": "Джек Лондон", "birth_date": "1986-09-14", "role": "user", "about": "Писатель и путешественник", "ip": "192.168.1.19", "phone": "+380639998877"},
-        {"username": "kate", "email": "kate@example.com", "full_name": "Катя Петрова", "birth_date": "1997-04-22", "role": "user", "about": "Музыкант и преподаватель", "ip": "192.168.1.20", "phone": "+380996663311"},
-        {"username": "leo", "email": "leo@example.com", "full_name": "Лео Месси", "birth_date": "1988-08-08", "role": "user", "about": "Футболист", "ip": "192.168.1.21", "phone": "+380971112255"},
-        {"username": "maria", "email": "maria@example.com", "full_name": "Мария Сидорова", "birth_date": "1994-10-27", "role": "user", "about": "Флорист", "ip": "192.168.1.22", "phone": "+380684447700"},
-        {"username": "nick", "email": "nick@example.com", "full_name": "Николай Васильев", "birth_date": "1996-05-03", "role": "user", "about": "Веб-разработчик", "ip": "192.168.1.23", "phone": "+380938889944"},
-        {"username": "olga", "email": "olga@example.com", "full_name": "Ольга Романова", "birth_date": "1999-01-19", "role": "user", "about": "Студентка и волонтёр", "ip": "192.168.1.24", "phone": "+380507771133"},
-            ]
     def user_cards():
+
+        users = [
+            {"username": "alice", "email": "alice@example.com", "full_name": "Алиса Иванова", "birth_date": "1990-01-01", "role": "user", "about": "Люблю котиков и Python 🐍", "ip": "192.168.1.10", "phone": "+380501112233"},
+            {"username": "bob", "email": "bob@example.com", "full_name": "Боб Смит", "birth_date": "1985-05-12", "role": "admin", "about": "Администрирую этот сервис", "ip": "192.168.1.11", "phone": "+380674445566"},
+            {"username": "charlie", "email": "charlie@example.com", "full_name": "Чарли Браун", "birth_date": "1992-09-23", "role": "user", "about": "Пишу статьи о технологиях", "ip": "192.168.1.12", "phone": "+380637778899"},
+            {"username": "diana", "email": "diana@example.com", "full_name": "Диана Кинг", "birth_date": "1995-03-15", "role": "user", "about": "Фотограф и путешественник", "ip": "192.168.1.13", "phone": "+380991234567"},
+            {"username": "eva", "email": "eva@example.com", "full_name": "Ева Ли", "birth_date": "1998-07-30", "role": "user", "about": "Геймер и стример", "ip": "192.168.1.14", "phone": "+380978765432"},
+            {"username": "frank", "email": "frank@example.com", "full_name": "Фрэнк Миллер", "birth_date": "1987-11-21", "role": "user", "about": "Люблю спорт и книги", "ip": "192.168.1.15", "phone": "+380681113355"},
+            {"username": "grace", "email": "grace@example.com", "full_name": "Грейс Хоппер", "birth_date": "1991-02-10", "role": "user", "about": "Разработчик ПО", "ip": "192.168.1.16", "phone": "+380932224466"},
+            {"username": "henry", "email": "henry@example.com", "full_name": "Генри Форд", "birth_date": "1989-06-18", "role": "user", "about": "Инженер и изобретатель", "ip": "192.168.1.17", "phone": "+380503337799"},
+            {"username": "irina", "email": "irina@example.com", "full_name": "Ирина Коваленко", "birth_date": "1993-12-05", "role": "user", "about": "Дизайнер интерфейсов", "ip": "192.168.1.18", "phone": "+380675551122"},
+            {"username": "jack", "email": "jack@example.com", "full_name": "Джек Лондон", "birth_date": "1986-09-14", "role": "user", "about": "Писатель и путешественник", "ip": "192.168.1.19", "phone": "+380639998877"},
+            {"username": "kate", "email": "kate@example.com", "full_name": "Катя Петрова", "birth_date": "1997-04-22", "role": "user", "about": "Музыкант и преподаватель", "ip": "192.168.1.20", "phone": "+380996663311"},
+            {"username": "leo", "email": "leo@example.com", "full_name": "Лео Месси", "birth_date": "1988-08-08", "role": "user", "about": "Футболист", "ip": "192.168.1.21", "phone": "+380971112255"},
+            {"username": "maria", "email": "maria@example.com", "full_name": "Мария Сидорова", "birth_date": "1994-10-27", "role": "user", "about": "Флорист", "ip": "192.168.1.22", "phone": "+380684447700"},
+            {"username": "nick", "email": "nick@example.com", "full_name": "Николай Васильев", "birth_date": "1996-05-03", "role": "user", "about": "Веб-разработчик", "ip": "192.168.1.23", "phone": "+380938889944"},
+            {"username": "olga", "email": "olga@example.com", "full_name": "Ольга Романова", "birth_date": "1999-01-19", "role": "user", "about": "Студентка и волонтёр", "ip": "192.168.1.24", "phone": "+380507771133"},
+                ]
+
         def edit_user(e, user):
             print(f"Редактировать: {user['username']}")
 
@@ -554,6 +517,46 @@ def main(page: ft.Page):
         animate_opacity=200
     )
 
+    def load_users_button_clicked(e):
+        loading.current.visible = True
+        page.update()
+        user_list_view.controls = user_cards()
+        user_list_view.update()
+        loading.current.visible = False
+        page.update()
+
+    load_users_button = ft.ElevatedButton(
+        text="Load Users",
+        on_click=load_users_button_clicked,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=12),
+            bgcolor=ft.Colors.BLUE_500,
+            color=ft.Colors.WHITE,
+            overlay_color=ft.Colors.BLUE_100,
+            padding=ft.padding.symmetric(horizontal=20, vertical=12),
+            elevation=3,
+        ),
+    )
+
+    user_list_view = ft.ListView(
+        expand=True,
+        spacing=10,
+        controls=[],
+    )
+
+    loading_indicator = ft.ProgressBar(
+        ref=loading,
+        visible=False, # Изначально скрыт
+        # Фон индикатора: светло-серый с 20% непрозрачности
+        bgcolor=ft.Colors.with_opacity(0.2, ft.Colors.WHITE),
+        # Цвет заполнения: синий с 70% непрозрачности
+        color=ft.Colors.with_opacity(0.7, ft.Colors.BLUE_ACCENT_200),
+        height=10, # Немного толще для лучшей видимости
+        border_radius=ft.border_radius.all(5), # Скругленные углы
+
+        animate_opacity=200
+    )
+
     users_view = ft.Container(
         expand=True,
         padding=15,
@@ -567,15 +570,15 @@ def main(page: ft.Page):
                     controls=[
                         ft.Icon(ft.Icons.PEOPLE_ALT_OUTLINED, color=ft.Colors.WHITE, size=28),
                         ft.Text(tr("registered_users"), size=24, color=ft.Colors.WHITE),
+                        ft.Row(
+                            controls=[load_users_button],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
                     ],
                 ),
-                ft.ListView(
-                        expand=True,
-                        # scroll=ft.ScrollMode.AUTO,
-                        spacing=10,
-                        # alignment=ft.MainAxisAlignment.CENTER,
-                        controls=user_cards(),
-                    )
+                
+                loading_indicator,
+                user_list_view,
             ],
             spacing=15,
             alignment=ft.MainAxisAlignment.START,
@@ -899,10 +902,8 @@ def main(page: ft.Page):
         )
     
     def reset_ui():
-        page.client_storage.set("is_login_screen", True)
         page.clean()
         main(page)
-        page.client_storage.remove("is_login_screen")
 
         
         # page.on_login()
